@@ -10,9 +10,8 @@ covered by tests (I-52).
 
 Done but not verified.
 
-- [ ] The release through GitHub Actions (`release.yml`) — never run, a `v*` tag is needed. CI (`ci.yml`) builds and
-  passes the tests on all three OSes.
-- [ ] The packages for Linux (AppImage) and macOS (`.app`) — the scripts are only written; the code builds in CI.
+- [ ] The packages of all three OSes (pre-release 0.1.24) are built by GitHub Actions but have not been started:
+  the Windows zip, the Linux AppImage, the macOS `.app` (ad-hoc signature, Gatekeeper).
 - [ ] Sleep prevention (I-69) on Linux and macOS; a single instance (I-74) on Linux and macOS.
 - [ ] The application icon (I-84) on Linux (window, AppImage) and macOS (`.app`, Dock).
 - [ ] Start, playback and export on clean systems of all three OSes.
