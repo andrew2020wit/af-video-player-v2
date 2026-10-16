@@ -10,9 +10,9 @@ covered by tests (I-52).
 
 Done but not verified.
 
-- [ ] CI and the release through GitHub Actions (`.github/workflows`) — never run, a push is needed.
-- [ ] The build and packages for Linux (AppImage) and macOS (`.app`) — the scripts are only written. The I-69 code
-  (D-Bus on Linux, IOKit on macOS) has not been compiled.
+- [ ] The release through GitHub Actions (`release.yml`) — never run, a `v*` tag is needed. CI (`ci.yml`) builds and
+  passes the tests on all three OSes.
+- [ ] The packages for Linux (AppImage) and macOS (`.app`) — the scripts are only written; the code builds in CI.
 - [ ] Sleep prevention (I-69) on Linux and macOS; a single instance (I-74) on Linux and macOS.
 - [ ] The application icon (I-84) on Linux (window, AppImage) and macOS (`.app`, Dock).
 - [ ] Start, playback and export on clean systems of all three OSes.
