@@ -23,7 +23,7 @@ jobs:
             os: ubuntu-22.04
             qt-arch: linux_gcc_64
           - name: macOS
-            os: macos-14
+            os: macos-15
             qt-arch: clang_64
 
     steps:

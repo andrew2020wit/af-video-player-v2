@@ -20,11 +20,11 @@ jobs:
             preset: windows
             qt-arch: win64_msvc2022_64
           - name: Linux
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             preset: unix
             qt-arch: linux_gcc_64
           - name: macOS
-            os: macos-14
+            os: macos-15
             preset: unix
             qt-arch: clang_64
 

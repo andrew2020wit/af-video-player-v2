@@ -643,6 +643,9 @@ no libmpv port, and building Qt and FFmpeg from source takes hours.
 
 - Builds use the latest released Qt 6 version (patches of the 6.8 LTS become available only to commercial users
   over time); the minimum supported version is 6.8.
+- CI and the release use the same GitHub runners. Linux — Ubuntu 22.04, the oldest available runner: the AppImage
+  takes glibc from the system, and CI checks the same libmpv and FFmpeg versions as the release. macOS — macOS 15:
+  the Homebrew libraries are built for the runner's macOS, so the `.app` needs macOS 15 or later.
 
 **Unit tests (I-52).** Qt Test + CTest, no third-party frameworks; data-driven tests (`_data`) for sets of parsing
 cases. Test subtitle files are in `tests/data`. Tests run in CI on all three OSes.
