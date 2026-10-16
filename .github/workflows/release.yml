@@ -14,6 +14,8 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
+      # A failed package does not cancel the others: their logs show whether they work too.
+      fail-fast: false
       matrix:
         include:
           - name: Windows
