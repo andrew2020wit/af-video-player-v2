@@ -56,6 +56,26 @@ function Find-MsvcTool([string]$Name) {
     return $tool
 }
 
+# 7-Zip when installed (the tar of Windows Server 2022 cannot read 7z archives), otherwise Windows' bsdtar,
+# which reads both 7z and zip on Windows 11.
+function Expand-ArchiveTo([string]$Archive, [string]$Destination) {
+    $sevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
+
+    if (-not $sevenZip -and (Test-Path "$env:ProgramFiles\7-Zip\7z.exe")) {
+        $sevenZip = Get-Command "$env:ProgramFiles\7-Zip\7z.exe"
+    }
+
+    if ($sevenZip) {
+        & $sevenZip.Source x -y "-o$Destination" $Archive | Out-Null
+    } else {
+        & (Join-Path $env:SystemRoot "System32\tar.exe") -xf $Archive -C $Destination
+    }
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Extraction failed: $Archive"
+    }
+}
+
 $DepsDir = [System.IO.Path]::GetFullPath($DepsDir)
 $downloadDir = Join-Path $DepsDir "downloads"
 $mpvDir = Join-Path $DepsDir "mpv"
@@ -65,18 +85,15 @@ New-Item -ItemType Directory -Force $downloadDir | Out-Null
 $mpvArchive = Get-VerifiedDownload $MpvUrl $MpvSha256 $downloadDir
 $ffmpegArchive = Get-VerifiedDownload $FfmpegUrl $FfmpegSha256 $downloadDir
 
-# Windows' bsdtar reads both 7z and zip
-$tar = Join-Path $env:SystemRoot "System32\tar.exe"
-
 Remove-Item -Recurse -Force $mpvDir -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $mpvDir | Out-Null
-& $tar -xf $mpvArchive -C $mpvDir
+Expand-ArchiveTo $mpvArchive $mpvDir
 
 Remove-Item -Recurse -Force $ffmpegDir -ErrorAction SilentlyContinue
 $ffmpegExtractDir = Join-Path $downloadDir "ffmpeg-extract"
 Remove-Item -Recurse -Force $ffmpegExtractDir -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $ffmpegExtractDir | Out-Null
-& $tar -xf $ffmpegArchive -C $ffmpegExtractDir
+Expand-ArchiveTo $ffmpegArchive $ffmpegExtractDir
 Move-Item (Get-ChildItem $ffmpegExtractDir -Directory | Select-Object -First 1).FullName $ffmpegDir
 Remove-Item -Recurse -Force $ffmpegExtractDir
 
@@ -84,6 +101,11 @@ Remove-Item -Recurse -Force $ffmpegExtractDir
 $dumpbin = Find-MsvcTool "dumpbin.exe"
 $lib = Find-MsvcTool "lib.exe"
 $dll = Get-ChildItem $mpvDir -Filter "libmpv-*.dll" | Select-Object -First 1
+
+if (-not $dll) {
+    throw "libmpv-*.dll not found in $mpvDir"
+}
+
 $exports = & $dumpbin /exports $dll.FullName |
     Where-Object { $_ -match "^\s+\d+\s+[0-9A-F]+\s+[0-9A-F]{8}\s+(\S+)" } |
     ForEach-Object { $Matches[1] }

@@ -23,8 +23,13 @@ private slots:
 
 namespace {
 
-const QString series = QStringLiteral("D:/Series");
-const QStringList seriesFiles = {"D:/Series/e10.mkv", "D:/Series/e2.mkv", "D:/Series/e1.mkv", "D:/Series/e3.mkv"};
+// An absolute path on any OS: "C:/<relative>" on Windows, "/<relative>" elsewhere.
+QString p(const char *relative) {
+    return QDir::rootPath() + QLatin1String(relative);
+}
+
+const QString series = p("Series");
+const QStringList seriesFiles = {p("Series/e10.mkv"), p("Series/e2.mkv"), p("Series/e1.mkv"), p("Series/e3.mkv")};
 
 // percent < 0: never played to the end of the file (no duration).
 HistoryEntry entry(const QString &path, int percent) {
@@ -59,26 +64,26 @@ void HistoryGroupsTest::watched() {
     QFETCH(int, percent);
     QFETCH(bool, watched);
 
-    QCOMPARE(isWatched(entry("D:/a.mkv", percent)), watched);
+    QCOMPARE(isWatched(entry(p("a.mkv"), percent)), watched);
 }
 
 void HistoryGroupsTest::groupsByFolderInRecencyOrder() {
     const QList<HistoryGroup> groups =
-        group({entry("D:/Series/e2.mkv", 30), entry("D:/Film/movie.mkv", 10), entry("D:/Series/e1.mkv", 100)});
+        group({entry(p("Series/e2.mkv"), 30), entry(p("Film/movie.mkv"), 10), entry(p("Series/e1.mkv"), 100)});
 
     QCOMPARE(groups.size(), 2);
     QCOMPARE(groups[0].folder, series);
     QCOMPARE(groups[0].entries.size(), 2);
-    QCOMPARE(groups[0].entries[0].path, QStringLiteral("D:/Series/e2.mkv"));
+    QCOMPARE(groups[0].entries[0].path, p("Series/e2.mkv"));
     QCOMPARE(groups[0].videoFiles,
-             QStringList({"D:/Series/e1.mkv", "D:/Series/e2.mkv", "D:/Series/e3.mkv", "D:/Series/e10.mkv"}));
+             QStringList({p("Series/e1.mkv"), p("Series/e2.mkv"), p("Series/e3.mkv"), p("Series/e10.mkv")}));
     QCOMPARE(groups[0].watchedCount, 1);
     QVERIFY(groups[0].isSeries());
-    QCOMPARE(groups[1].folder, QStringLiteral("D:/Film"));
+    QCOMPARE(groups[1].folder, p("Film"));
 }
 
 void HistoryGroupsTest::missingFilesAreSkipped() {
-    const QList<HistoryGroup> groups = group({entry("D:/Old/missing.mkv", 10), entry("D:/Series/e1.mkv", 10)});
+    const QList<HistoryGroup> groups = group({entry(p("Old/missing.mkv"), 10), entry(p("Series/e1.mkv"), 10)});
 
     QCOMPARE(groups.size(), 1);
     QCOMPARE(groups[0].folder, series);
@@ -88,16 +93,16 @@ void HistoryGroupsTest::continuePath_data() {
     QTest::addColumn<QList<HistoryEntry>>("entries");
     QTest::addColumn<QString>("continuePath");
 
-    QTest::newRow("latest not watched") << QList<HistoryEntry>{entry("D:/Series/e2.mkv", 40), entry("D:/Series/e1.mkv", 100)}
-                                        << QStringLiteral("D:/Series/e2.mkv");
-    QTest::newRow("latest watched: next") << QList<HistoryEntry>{entry("D:/Series/e2.mkv", 97)}
-                                          << QStringLiteral("D:/Series/e3.mkv");
+    QTest::newRow("latest not watched") << QList<HistoryEntry>{entry(p("Series/e2.mkv"), 40), entry(p("Series/e1.mkv"), 100)}
+                                        << p("Series/e2.mkv");
+    QTest::newRow("latest watched: next") << QList<HistoryEntry>{entry(p("Series/e2.mkv"), 97)}
+                                          << p("Series/e3.mkv");
     QTest::newRow("next watched is skipped")
-        << QList<HistoryEntry>{entry("D:/Series/e2.mkv", 100), entry("D:/Series/e3.mkv", 100)}
-        << QStringLiteral("D:/Series/e10.mkv");
-    QTest::newRow("last watched") << QList<HistoryEntry>{entry("D:/Series/e10.mkv", 100)} << QString();
-    QTest::newRow("never played") << QList<HistoryEntry>{entry("D:/Series/e3.mkv", -1)}
-                                  << QStringLiteral("D:/Series/e3.mkv");
+        << QList<HistoryEntry>{entry(p("Series/e2.mkv"), 100), entry(p("Series/e3.mkv"), 100)}
+        << p("Series/e10.mkv");
+    QTest::newRow("last watched") << QList<HistoryEntry>{entry(p("Series/e10.mkv"), 100)} << QString();
+    QTest::newRow("never played") << QList<HistoryEntry>{entry(p("Series/e3.mkv"), -1)}
+                                  << p("Series/e3.mkv");
 }
 
 void HistoryGroupsTest::continuePath() {
@@ -108,7 +113,7 @@ void HistoryGroupsTest::continuePath() {
 }
 
 void HistoryGroupsTest::singleVideoIsNotSeries() {
-    QVERIFY(!group({entry("D:/Film/movie.mkv", 100)}).front().isSeries());
+    QVERIFY(!group({entry(p("Film/movie.mkv"), 100)}).front().isSeries());
 }
 
 void HistoryGroupsTest::videoFilesOnDisk() {
