@@ -106,4 +106,5 @@ GitHub Releases.
 
 ## License
 
-[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html), the full text is in [LICENSE](LICENSE).
+[GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html), the full text is in [LICENSE](LICENSE). The
+third-party libraries in the release packages and their licenses: [THIRD-PARTY.md](THIRD-PARTY.md).

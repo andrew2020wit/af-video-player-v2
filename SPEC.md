@@ -34,8 +34,10 @@ UI labels are quoted as they appear in the interface (English, P-13).
 - **P-09. C++20 core:** libmpv and FFmpeg, parsing and merging of subtitles, history, settings. The interface and
   its logic are QML/JavaScript.
 - **P-10. Distribution:** GitHub Releases with portable builds for Windows (zip), Linux (AppImage) and macOS (zip
-  with an arm64 `.app`). GitHub Actions makes the builds when a version git tag is created. No code signing (the
-  first start shows SmartScreen / Gatekeeper warnings) and no installers.
+  with an arm64 `.app`). GitHub Actions makes the builds when a version git tag is created. No code signing with a
+  certificate (the first start shows SmartScreen / Gatekeeper warnings; the macOS bundle gets only an ad-hoc
+  signature, without which Apple Silicon does not run it) and no installers. Each package contains `LICENSE` and
+  `THIRD-PARTY.md` — the bundled third-party libraries, their licenses and where their source code is.
 - **P-11. Text subtitles only.** Image-based subtitles (PGS, VobSub, DVB) are not supported and are ignored
   completely: they are not shown over the video, not listed among tracks and not exported.
 - **P-12. Subtitles come from external files only.** For a video the user chooses two external subtitle files:

@@ -50,6 +50,8 @@ AF Video Player — a desktop video player for watching movies with subtitles, a
   requirements (`I-xx`), technology stack.
 - `TODO.md` — work left to do (verification, release, P2/P3) with references to `SPEC.md`.
   Tick or remove items when they are done.
+- `THIRD-PARTY.md` — third-party libraries in the release packages and their licenses; installed next to `LICENSE`.
+  Update it when the bundled libraries or their sources change.
 - `AGENTS.md` — this file.
 
 ## Documentation rules

@@ -131,8 +131,10 @@ if(WIN32)
     include(InstallRequiredSystemLibraries)
 endif()
 
+set(AFVP_LICENSE_FILES ${PROJECT_SOURCE_DIR}/LICENSE ${PROJECT_SOURCE_DIR}/THIRD-PARTY.md)
+
 if(WIN32 OR APPLE)
-    install(FILES ${PROJECT_SOURCE_DIR}/LICENSE DESTINATION .)
+    install(FILES ${AFVP_LICENSE_FILES} DESTINATION .)
 else()
-    install(FILES ${PROJECT_SOURCE_DIR}/LICENSE DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/af-video-player)
+    install(FILES ${AFVP_LICENSE_FILES} DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/af-video-player)
 endif()
