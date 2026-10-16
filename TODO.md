@@ -34,7 +34,6 @@ Done but not verified.
 
 ## 2. Build and release
 
-- [ ] Update the README before the first release: installation, first steps, SmartScreen / Gatekeeper warnings.
 - [ ] Publish release 1.0 with three archives (P-10, I-51).
 
 ## 3. Approved requirements (P2, P3)

@@ -42,6 +42,37 @@ See also sections 15 and 16 of the [license](LICENSE).
 C++20, [Qt 6](https://www.qt.io/) / QML, [libmpv](https://mpv.io/) for playback and
 [FFmpeg](https://ffmpeg.org/) for extracting embedded subtitles.
 
+## Installation
+
+Builds are published in [Releases](https://github.com/andrew2020wit/af-video-player-v2/releases). They are portable:
+there is no installer, the player runs from the folder where it was unpacked. The builds are not signed with a
+certificate, so the first start shows a warning of the operating system.
+
+- **Windows 10 / 11, x64** — `af-video-player-<version>-windows-x64.zip`. Unpack the archive and start
+  `bin\af-video-player.exe`. If SmartScreen says "Windows protected your PC": "More info" → "Run anyway".
+- **Linux, x86_64** — `af-video-player-<version>-linux-x86_64.AppImage`. Make the file executable
+  (`chmod +x af-video-player-*.AppImage`, or "Allow executing file as program" in the file properties) and start
+  it. The AppImage needs FUSE 2: if it does not start, install the `libfuse2` package (`libfuse2t64` on Ubuntu 24.04
+  and later) or start it with `--appimage-extract-and-run`.
+- **macOS 15 or later, Apple Silicon** — `af-video-player-<version>-macos-arm64.zip`. Unpack the archive and move
+  `af-video-player.app` to "Applications". The first start is blocked by Gatekeeper ("Apple could not verify…"):
+  close the message, open System Settings → Privacy & Security, click "Open Anyway" next to the message about
+  `af-video-player` and confirm. Alternatively: `xattr -dr com.apple.quarantine /Applications/af-video-player.app`.
+
+To update, replace the folder (Windows), the AppImage (Linux) or the `.app` (macOS) with the new one: settings and
+history are stored separately (see below) and are kept.
+
+## First steps
+
+1. Open the settings (the gear button or `Ctrl+,`) and choose the studied language (the language of the original
+   subtitles) and your native language (the translation).
+2. Put the subtitle files next to the video with the language code in the name: for `movie.mkv` —
+   `movie.en.srt` and `movie.uk.srt`. When a video is opened, the player finds them and takes the studied language
+   as the main subtitles and the native one as the secondary. Other files can be chosen with the `CC` button,
+   embedded subtitles are exported to such files in the same dialog.
+3. Open the video and press `Space` during playback: the video pauses and the list of cues is shown. `Space` again
+   continues playback.
+
 ## Usage
 
 - Open a video: the "Open video…" button / `Ctrl+O`, dropping a file onto the window, a click on a file in the
