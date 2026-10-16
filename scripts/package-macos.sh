@@ -14,6 +14,9 @@ cmake --build "$build_dir" --target af-video-player
 rm -rf "$stage_dir"
 # macdeployqt (through the CMake deploy script) also copies non-Qt libraries such as libmpv into the bundle.
 cmake --install "$build_dir" --prefix "$stage_dir"
+# macdeployqt changes the libraries in the bundle and breaks the linker's signatures; Apple Silicon does not run
+# code without a valid signature, so the bundle gets an ad-hoc one (no certificate).
+codesign --force --deep --sign - "$stage_dir/af-video-player.app"
 
 mkdir -p "$dist_dir"
 archive="$dist_dir/af-video-player-$version-macos-arm64.zip"
