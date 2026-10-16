@@ -1,0 +1,90 @@
+# Portable builds for GitHub Releases on a version tag (P-10, I-51): push a tag like "v1.0.0".
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  QT_VERSION: "6.10.3"
+
+jobs:
+  package:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - name: Windows
+            os: windows-2022
+            qt-arch: win64_msvc2022_64
+          - name: Linux
+            os: ubuntu-22.04
+            qt-arch: linux_gcc_64
+          - name: macOS
+            os: macos-14
+            qt-arch: clang_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version from the tag
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: ${{ matrix.qt-arch }}
+          cache: true
+
+      - name: MSVC environment (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./scripts/fetch-deps-windows.ps1
+          ./scripts/package-windows.ps1 -Version $env:VERSION
+
+      # The oldest supported Ubuntu keeps the AppImage compatible with older distributions.
+      - name: Package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build pkg-config libmpv-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev \
+            libgl-dev libxkbcommon-dev libegl1 libfuse2
+          ./scripts/package-linux.sh "$VERSION"
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install ninja pkg-config mpv ffmpeg
+          ./scripts/package-macos.sh "$VERSION"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.name }}
+          path: |
+            dist/*.zip
+            dist/*.AppImage
+
+  release:
+    needs: package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

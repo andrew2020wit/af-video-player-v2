@@ -1,0 +1,174 @@
+import QtQuick
+import QtQuick.Controls
+
+// All cues of the main subtitles with the secondary ones (F-42 - F-47), opened by Space; the video is paused
+// while it is shown.
+Rectangle {
+    id: list
+
+    required property var mpv
+    // The cue playback is at (F-45).
+    readonly property int currentIndex: App.subtitles.count > 0 ? App.subtitles.indexAt(mpv.position) : -1
+    // The cue that was current when the list was closed last time (F-45).
+    property int previousIndex: -1
+    // Marked by a right click (F-45): one mark, in memory only.
+    property int markedIndex: -1
+    // The next video in the folder, set when the video has played to the end (I-16).
+    property string nextVideoPath: ""
+
+    signal subtitlesDialogRequested()
+    signal exportRequested()
+    signal nextVideoRequested()
+    // Close the list and continue playback.
+    signal closeRequested()
+
+    function reset() {
+        previousIndex = -1
+        markedIndex = -1
+    }
+
+    function scrollBy(pixels) {
+        const minimum = listView.originY
+        const maximum = Math.max(minimum, listView.originY + listView.contentHeight - listView.height)
+        listView.contentY = Math.max(minimum, Math.min(maximum, listView.contentY + pixels))
+    }
+
+    function scrollToBeginning() {
+        listView.positionViewAtBeginning()
+    }
+
+    function scrollToEnd() {
+        listView.positionViewAtEnd()
+    }
+
+    function scrollToCurrent() {
+        if (currentIndex >= 0) {
+            listView.positionViewAtIndex(currentIndex, ListView.Center)
+        }
+    }
+
+    color: "#ffffff"
+
+    onVisibleChanged: {
+        if (visible) {
+            Qt.callLater(scrollToCurrent)
+        } else {
+            previousIndex = currentIndex
+        }
+    }
+
+    // Subtitles chosen while the list is open.
+    Connections {
+        target: App.subtitles
+
+        function onCountChanged() {
+            if (list.visible) {
+                Qt.callLater(list.scrollToCurrent)
+            }
+        }
+    }
+
+    // Clicks and the wheel outside the rows do not reach the video below: no pause toggle, no volume change.
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.AllButtons
+
+        onWheel: wheel => wheel.accepted = true
+    }
+
+    ListView {
+        id: listView
+
+        anchors.fill: parent
+        anchors.topMargin: nextButton.visible ? nextButton.height + 16 : 8
+        model: App.subtitles
+        clip: true
+        boundsBehavior: Flickable.StopAtBounds
+        cacheBuffer: 2000
+        visible: App.subtitles.count > 0
+
+        delegate: SubtitleRow {
+            isCurrent: index === list.currentIndex
+            isPrevious: index === list.previousIndex && index !== list.currentIndex
+            isMarked: index === list.markedIndex
+
+            onTimeClicked: {
+                // F-46: seek to the cue start and continue playback.
+                list.mpv.seek(App.subtitles.startSeconds(index))
+                list.closeRequested()
+            }
+            onMarkToggled: list.markedIndex = list.markedIndex === index ? -1 : index
+        }
+
+        ScrollBar.vertical: ScrollBar {
+            policy: ScrollBar.AlwaysOn
+        }
+    }
+
+    // The video has played to the end (I-16).
+    Button {
+        id: nextButton
+
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 8
+        visible: list.nextVideoPath !== ""
+        text: qsTr("Next: %1").arg(App.fileName(list.nextVideoPath))
+        focusPolicy: Qt.NoFocus
+
+        onClicked: list.nextVideoRequested()
+
+        ToolTip.visible: hovered
+        ToolTip.text: qsTr("Next file in the folder (N)")
+    }
+
+    // No main subtitles (I-56).
+    Column {
+        anchors.centerIn: parent
+        spacing: 16
+        visible: App.subtitles.count === 0
+
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("No subtitles")
+            font.pixelSize: 24
+            color: "#333333"
+        }
+
+        Row {
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 12
+
+            Button {
+                text: qsTr("Choose files…")
+                focusPolicy: Qt.NoFocus
+
+                onClicked: list.subtitlesDialogRequested()
+            }
+
+            Button {
+                text: qsTr("Export embedded…")
+                focusPolicy: Qt.NoFocus
+                visible: App.embeddedTextTrackCount > 0
+
+                onClicked: list.exportRequested()
+            }
+        }
+    }
+
+    // Close the list and continue playback (F-42).
+    ToolButton {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 8
+        anchors.rightMargin: 24
+        text: "✕"
+        font.pixelSize: 22
+        focusPolicy: Qt.NoFocus
+
+        onClicked: list.closeRequested()
+
+        ToolTip.visible: hovered
+        ToolTip.text: qsTr("Continue (Space)")
+    }
+}

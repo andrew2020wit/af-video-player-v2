@@ -1,0 +1,14 @@
+# IDEs and editors
+.idea/
+.vscode/
+CMakeUserPresets.json
+
+# Build output
+build/
+out/
+
+# Prebuilt Windows dependencies (scripts/fetch-deps-windows.ps1)
+deps/
+
+# Release packages (scripts/package-*)
+dist/

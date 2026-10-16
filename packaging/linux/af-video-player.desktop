@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=AF Video Player
+Comment=Video player for watching movies with subtitles, aimed at language learning
+Exec=af-video-player %f
+Icon=af-video-player
+Terminal=false
+Categories=AudioVideo;Video;Player;Education;
+MimeType=video/x-matroska;video/mp4;video/x-msvideo;video/quicktime;video/webm;video/mpeg;video/x-ms-wmv;video/mp2t;video/x-flv;video/ogg;

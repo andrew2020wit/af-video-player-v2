@@ -1,0 +1,2 @@
+# Test data is compared byte for byte (encodings, BOMs, line endings).
+tests/data/** -text
