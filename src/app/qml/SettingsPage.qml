@@ -323,7 +323,7 @@ Page {
                     }
 
                     Label {
-                        text: "<a href=\"https://github.com/andrew2020wit/af-video-player-v2\">github.com/andrew2020wit/af-video-player-v2</a>"
+                        text: "<a href=\"" + App.homepageUrl + "\">" + App.homepageUrl.replace("https://", "") + "</a>"
                         textFormat: Text.StyledText
 
                         onLinkActivated: link => Qt.openUrlExternally(link)

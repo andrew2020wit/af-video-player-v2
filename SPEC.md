@@ -262,7 +262,8 @@ subtitles for the video during the export.
   shown but stay in `history.json` — to find a moved file (I-12); they, like the oldest entries, are pushed out by
   the `historySize` limit; a hovered entry gets a hand cursor and an outline; entries of series are grouped
   (I-76);
-- the settings button (I-50).
+- in the top right corner: the "GitHub" button, which opens the project page in the browser, and the settings
+  button (I-50).
 
 The chosen video starts playing at once. From the file manager, the command line or by drag & drop the video opens
 at once, without the start page.

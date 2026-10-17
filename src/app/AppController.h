@@ -69,6 +69,7 @@ class AppController : public QObject {
 
     Q_PROPERTY(QVariantList languages READ languages CONSTANT)
     Q_PROPERTY(QString appVersion READ appVersion CONSTANT)
+    Q_PROPERTY(QString homepageUrl READ homepageUrl CONSTANT)
     Q_PROPERTY(QString qtVersion READ qtVersion CONSTANT)
     Q_PROPERTY(QString ffmpegVersion READ ffmpegVersion CONSTANT)
 
@@ -123,6 +124,8 @@ public:
 
     QVariantList languages() const;
     QString appVersion() const;
+    // The project page with the source code (I-56).
+    QString homepageUrl() const;
     QString qtVersion() const;
     QString ffmpegVersion() const;
 

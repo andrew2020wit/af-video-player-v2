@@ -26,20 +26,41 @@ Rectangle {
 
     color: palette.window
 
-    ToolButton {
+    Row {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: 12
-        text: "⚙"
-        font.pixelSize: 24
-        // A monochrome glyph in the text colour; the default font falls back to a pale colour emoji on Windows.
-        font.family: "Segoe UI Symbol"
-        focusPolicy: Qt.NoFocus
+        spacing: 8
 
-        onClicked: startPage.settingsRequested()
+        // The project page in the browser (I-56).
+        ToolButton {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "GitHub"
+            focusPolicy: Qt.NoFocus
 
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Settings (Ctrl+,)")
+            onClicked: Qt.openUrlExternally(App.homepageUrl)
+
+            HoverHandler {
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            ToolTip.visible: hovered
+            ToolTip.text: App.homepageUrl
+        }
+
+        ToolButton {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "⚙"
+            font.pixelSize: 24
+            // A monochrome glyph in the text colour; the default font falls back to a pale colour emoji on Windows.
+            font.family: "Segoe UI Symbol"
+            focusPolicy: Qt.NoFocus
+
+            onClicked: startPage.settingsRequested()
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Settings (Ctrl+,)")
+        }
     }
 
     ColumnLayout {

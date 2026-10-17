@@ -12,7 +12,8 @@ set_target_properties(af-video-player PROPERTIES
     OUTPUT_NAME af-video-player
 )
 
-target_compile_definitions(af-video-player PRIVATE AFVP_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(af-video-player PRIVATE AFVP_VERSION="${PROJECT_VERSION}"
+    AFVP_HOMEPAGE_URL="${PROJECT_HOMEPAGE_URL}")
 
 if(MSVC)
     # Qt headers used by the generated QML type registration code trigger "unreachable code".

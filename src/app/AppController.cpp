@@ -392,6 +392,10 @@ QString AppController::appVersion() const {
     return QCoreApplication::applicationVersion();
 }
 
+QString AppController::homepageUrl() const {
+    return QStringLiteral(AFVP_HOMEPAGE_URL);
+}
+
 QString AppController::qtVersion() const {
     return QString::fromLatin1(qVersion());
 }
