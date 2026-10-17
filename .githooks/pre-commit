@@ -1,0 +1,53 @@
+#!/bin/sh
+# Builds the project and runs the tests (ctest, qmllint included) before a commit.
+# Enabled once per clone: git config core.hooksPath .githooks
+# Skipped when only documentation is staged; bypass in an emergency: git commit --no-verify.
+# The working tree is built and tested, not only the staged changes.
+
+staged=$(git diff --cached --name-only --diff-filter=ACMRD)
+
+if [ -z "$staged" ] || ! printf '%s\n' "$staged" | grep -qvE '\.md$|^screenshots/'; then
+    exit 0
+fi
+
+case "$(uname -s)" in
+    MINGW* | MSYS* | CYGWIN*) preset=windows ;;
+    *) preset=unix ;;
+esac
+
+root=$(git rev-parse --show-toplevel)
+cache="$root/build/$preset/CMakeCache.txt"
+
+if [ ! -f "$cache" ]; then
+    echo "pre-commit: build/$preset is not configured; run: cmake --preset $preset" >&2
+    exit 1
+fi
+
+# cmake is not always on PATH (e.g. installed with pip); the configured build knows where it is.
+cmake_command=$(sed -n 's/^CMAKE_COMMAND:INTERNAL=//p' "$cache")
+cmake_dir=$(dirname "$cmake_command")
+
+if command -v cmake >/dev/null 2>&1; then
+    cmake=cmake
+    ctest=ctest
+else
+    cmake="$cmake_command"
+    ctest="$cmake_dir/ctest"
+fi
+
+cd "$root" || exit 1
+echo "pre-commit: building and testing ($preset)..."
+
+if ! build_log=$("$cmake" --build --preset "$preset" 2>&1); then
+    printf '%s\n' "$build_log" | tail -n 40 >&2
+    echo "pre-commit: the build failed" >&2
+    exit 1
+fi
+
+if ! test_log=$("$ctest" --preset "$preset" 2>&1); then
+    printf '%s\n' "$test_log" >&2
+    echo "pre-commit: tests failed" >&2
+    exit 1
+fi
+
+printf '%s\n' "$test_log" | grep -E "tests passed"

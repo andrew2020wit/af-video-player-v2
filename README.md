@@ -132,6 +132,10 @@ ctest --preset unix
 
 Packages: `scripts/package-linux.sh 1.0.0` (AppImage), `scripts/package-macos.sh 1.0.0` (zip with `.app`).
 
+Pre-commit hook: `git config core.hooksPath .githooks` (once per clone) makes `git commit` build the project and
+run the tests first; a commit that changes only documentation is not checked. The configured build folder
+(`build/windows` or `build/unix`) is used.
+
 Release: when a `v*` git tag is pushed, GitHub Actions builds the packages for the three OSes and publishes them in
 GitHub Releases.
 

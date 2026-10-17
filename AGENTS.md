@@ -33,6 +33,8 @@ AF Video Player — a desktop video player for watching movies with subtitles, a
 - Run `ctest` after changing `src/core`, `src/export` or QML; add data-driven tests for new core logic.
   The `qmllint` test fails on any qmllint warning in `src/app/qml` (an unknown property, a handler of a missing
   signal): QML errors otherwise show up only when the window loads.
+- The pre-commit hook (`.githooks/pre-commit`, enabled by `git config core.hooksPath .githooks`) builds and runs
+  `ctest` before each commit that changes more than documentation; fix a failure instead of `--no-verify`.
 - Step by step for this machine (tools not on `PATH`, the local portable build in
   `dist/windows/af-video-player/`, the default kind of build):
   `.claude/skills/local-build/SKILL.md`.

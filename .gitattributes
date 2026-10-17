@@ -1,2 +1,5 @@
 # Test data is compared byte for byte (encodings, BOMs, line endings).
 tests/data/** -text
+
+# Shell scripts run by sh, also on Windows.
+.githooks/* text eol=lf
