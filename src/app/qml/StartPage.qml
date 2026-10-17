@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -120,14 +122,16 @@ Rectangle {
                     model: !group.modelData.isSeries || group.expanded ? group.modelData.entries : []
 
                     delegate: HistoryRow {
+                        id: historyRow
+
                         required property var modelData
 
                         width: group.width
-                        entry: modelData
+                        entry: historyRow.modelData
                         inSeries: group.modelData.isSeries
 
-                        onClicked: startPage.historyItemClicked(modelData.path)
-                        onRemoveRequested: App.removeFromHistory([modelData.path])
+                        onClicked: startPage.historyItemClicked(historyRow.modelData.path)
+                        onRemoveRequested: App.removeFromHistory([historyRow.modelData.path])
                     }
                 }
             }

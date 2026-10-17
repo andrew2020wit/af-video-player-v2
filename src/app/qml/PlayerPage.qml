@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
@@ -295,7 +297,10 @@ Item {
     Timer {
         id: clickTimer
 
+        // qmllint disable missing-property
+        // Qt.styleHints is typed as QObject for qmllint.
         interval: Qt.styleHints.mouseDoubleClickInterval
+        // qmllint enable missing-property
 
         onTriggered: page.togglePause()
     }

@@ -25,3 +25,8 @@ afvp_add_test(tst_mediafiles)
 afvp_add_test(tst_historygroups)
 afvp_add_test(tst_misc)
 afvp_add_test(tst_export)
+
+# QML has no compile-time checks: a handler of a missing signal or an unknown property only fails when the window
+# loads. qmllint checks the app's QML with the arguments of its af-video-player_qmllint target; any warning fails.
+add_test(NAME qmllint
+    COMMAND Qt6::qmllint --max-warnings 0 @${PROJECT_BINARY_DIR}/src/app/.rcc/qmllint/af-video-player.rsp)

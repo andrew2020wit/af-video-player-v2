@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 
@@ -89,16 +91,18 @@ Rectangle {
         visible: App.subtitles.count > 0
 
         delegate: SubtitleRow {
-            isCurrent: index === list.currentIndex
-            isPrevious: index === list.previousIndex && index !== list.currentIndex
-            isMarked: index === list.markedIndex
+            id: row
+
+            isCurrent: row.index === list.currentIndex
+            isPrevious: row.index === list.previousIndex && row.index !== list.currentIndex
+            isMarked: row.index === list.markedIndex
 
             onTimeClicked: {
                 // F-46: seek to the cue start and continue playback.
-                list.mpv.seek(App.subtitles.startSeconds(index))
+                list.mpv.seek(App.subtitles.startSeconds(row.index))
                 list.closeRequested()
             }
-            onMarkToggled: list.markedIndex = list.markedIndex === index ? -1 : index
+            onMarkToggled: list.markedIndex = list.markedIndex === row.index ? -1 : row.index
         }
 
         ScrollBar.vertical: ScrollBar {

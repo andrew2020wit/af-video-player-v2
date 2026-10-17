@@ -30,7 +30,9 @@ AF Video Player — a desktop video player for watching movies with subtitles, a
 - Windows: `scripts/fetch-deps-windows.ps1` once, then with `QT_ROOT_DIR` set to the Qt MSVC kit:
   `cmake --preset windows`, `cmake --build --preset windows`, `ctest --preset windows`.
 - Linux / macOS: the `unix` presets; libmpv and FFmpeg come from system packages (pkg-config).
-- Run `ctest` after changing `src/core` or `src/export`; add data-driven tests for new core logic.
+- Run `ctest` after changing `src/core`, `src/export` or QML; add data-driven tests for new core logic.
+  The `qmllint` test fails on any qmllint warning in `src/app/qml` (an unknown property, a handler of a missing
+  signal): QML errors otherwise show up only when the window loads.
 - Step by step for this machine (tools not on `PATH`, the local portable build in
   `dist/windows/af-video-player/`, the default kind of build):
   `.claude/skills/local-build/SKILL.md`.
