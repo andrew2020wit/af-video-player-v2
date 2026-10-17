@@ -26,6 +26,20 @@ Rectangle {
         expandedFolders = folders
     }
 
+    // Space (I-88): the first item of the history, the last watched one — "Continue" of a series or a plain file.
+    function continueFirst() {
+        if (history.length === 0 || removeSeriesDialog.visible) {
+            return
+        }
+
+        const first = history[0]
+        const path = first.isSeries ? first.continuePath : first.entries[0].path
+
+        if (path !== "") {
+            historyItemClicked(path)
+        }
+    }
+
     color: palette.window
 
     Row {

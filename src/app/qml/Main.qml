@@ -167,6 +167,12 @@ ApplicationWindow {
             // Full screen on the start page as well (I-30).
             toggleFullScreen()
             event.accepted = true
+        } else if (key === Qt.Key_Space) {
+            if (!event.isAutoRepeat) {
+                startPage.continueFirst()
+            }
+
+            event.accepted = true
         } else if (key === Qt.Key_Escape) {
             exitFullScreen()
             event.accepted = true
@@ -246,6 +252,8 @@ ApplicationWindow {
         }
 
         StartPage {
+            id: startPage
+
             anchors.fill: parent
             visible: App.videoPath === ""
 

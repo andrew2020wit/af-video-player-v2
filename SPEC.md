@@ -275,6 +275,7 @@ After the export the subtitle search of the open video (I-06) runs again.
 | I-56 | The start page: opening a video and the history. Description — below | P1 |
 | I-57 | The "Subtitles" dialog in the player: choice of the main and secondary files, export of embedded ones (I-08) | P1 |
 | I-58 | Back to the start page from the player (a button on the panel, `Ctrl+H`) | P1 |
+| I-88 | `Space` on the start page continues the first item of the history (the last watched one). Rules — below | P2 |
 
 **The start page (I-56)** is shown at a start without a file and by I-58. It contains:
 
@@ -285,7 +286,10 @@ After the export the subtitle search of the open video (I-06) runs again.
   the `historySize` limit; a hovered entry gets a hand cursor and an outline; entries of series are grouped
   (I-76);
 - in the top right corner: the "Batch export…" button (I-87), the "GitHub" button, which opens the project page in the browser, the settings
-  button (I-50) and the full screen button (I-30); `F` toggles full screen here too, `Esc` leaves it.
+  button (I-50) and the full screen button (I-30); `F` toggles full screen here too, `Esc` leaves it;
+- `Space` (I-88) opens the first item of the history, as a click on it would: for a series — its "Continue"
+  episode (I-76; nothing happens when the series has no such button), otherwise — the file. With an empty history
+  it does nothing.
 
 The chosen video starts playing at once. From the file manager, the command line or by drag & drop the video opens
 at once, without the start page.
