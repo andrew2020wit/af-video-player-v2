@@ -98,7 +98,8 @@ ApplicationWindow {
     }
 
     function openVideoDialog() {
-        videoDialog.currentFolder = App.videoPath !== "" ? App.videoFolderUrl : App.openFolderUrl
+        videoDialog.currentFolder = App.openFolderUrl
+        videoDialog.selectedFile = App.openFileUrl
         videoDialog.open()
     }
 

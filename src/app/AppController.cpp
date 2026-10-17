@@ -7,6 +7,7 @@
 #include "JsonFile.h"
 #include "KeyMapping.h"
 #include "Languages.h"
+#include "MediaFiles.h"
 #include "SubtitleExtractor.h"
 #include "SubtitleParser.h"
 #include "TimeFormat.h"
@@ -258,7 +259,15 @@ void AppController::setRestartWatched(bool restart) {
 }
 
 QString AppController::openFolderUrl() const {
-    return folderUrl(m_settings.lastOpenFolder);
+    const QString &file = m_settings.lastOpenFile;
+
+    return folderUrl(file.isEmpty() ? QString() : afvp::existingFolder(QFileInfo(file).absolutePath()));
+}
+
+QString AppController::openFileUrl() const {
+    const QString &file = m_settings.lastOpenFile;
+
+    return !file.isEmpty() && QFileInfo(file).isFile() ? QUrl::fromLocalFile(file).toString() : QString();
 }
 
 QVariantList AppController::history() const {
@@ -448,7 +457,7 @@ bool AppController::openVideo(const QString &location) {
     m_foundSubtitles = afvp::findSubtitles(m_videoPath);
     m_automaticSubtitles =
         afvp::chooseSubtitles(m_foundSubtitles, m_settings.studiedLanguage, m_settings.nativeLanguage);
-    m_settings.lastOpenFolder = fileInfo.absolutePath();
+    m_settings.lastOpenFile = m_videoPath;
     saveSettings();
     reloadSubtitles();
     emit videoChanged();

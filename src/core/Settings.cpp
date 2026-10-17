@@ -80,8 +80,8 @@ QJsonObject Settings::toJson() const {
         {QStringLiteral("secondaryOverlayFontSize"), secondaryOverlayFontSize},
         {QStringLiteral("historySize"), historySize},
         {QStringLiteral("restartWatched"), restartWatched},
-        {QStringLiteral("lastOpenFolder"),
-         lastOpenFolder.isEmpty() ? QJsonValue(QJsonValue::Null) : QJsonValue(lastOpenFolder)},
+        {QStringLiteral("lastOpenFile"),
+         lastOpenFile.isEmpty() ? QJsonValue(QJsonValue::Null) : QJsonValue(lastOpenFile)},
         {QStringLiteral("window"), window.isValid() ? QJsonValue(window.toJson()) : QJsonValue(QJsonValue::Null)},
     };
 }
@@ -111,7 +111,7 @@ Settings Settings::fromJson(const QJsonObject &object) {
     settings.historySize = std::clamp(object.value(QStringLiteral("historySize")).toInt(defaults.historySize),
                                       minimumHistorySize, maximumHistorySize);
     settings.restartWatched = object.value(QStringLiteral("restartWatched")).toBool(defaults.restartWatched);
-    settings.lastOpenFolder = stringOrDefault(object, QStringLiteral("lastOpenFolder"), QString());
+    settings.lastOpenFile = stringOrDefault(object, QStringLiteral("lastOpenFile"), QString());
     settings.window = WindowGeometry::fromJson(object.value(QStringLiteral("window")).toObject());
 
     return settings;

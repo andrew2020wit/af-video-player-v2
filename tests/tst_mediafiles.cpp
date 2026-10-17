@@ -16,6 +16,7 @@ private slots:
     void naturalOrder();
     void fileNameOrder();
     void nextVideo();
+    void existingFolders();
 };
 
 void MediaFilesTest::fileTypes() {
@@ -77,6 +78,23 @@ void MediaFilesTest::nextVideo() {
     // A video that is not in the folder listing (e.g. an unknown extension) still has a next file.
     QCOMPARE(next("s01e05.xyz"), QStringLiteral("S01E09.avi"));
     QCOMPARE(nextVideoFile(root.filePath("s01e02.mp4")), QDir::fromNativeSeparators(root.filePath("S01E09.avi")));
+}
+
+void MediaFilesTest::existingFolders() {
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    QVERIFY(QDir(root.path()).mkpath("Series/Season 1"));
+
+    const QString path = QDir::cleanPath(root.path());
+    QFile video(path + "/Series/Season 1/e01.mkv");
+    QVERIFY(video.open(QIODevice::WriteOnly));
+
+    QCOMPARE(existingFolder(path + "/Series/Season 1"), path + "/Series/Season 1");
+    QCOMPARE(existingFolder(path + "/Series/Season 2"), path + "/Series");
+    QCOMPARE(existingFolder(path + "/Films/Comedy/2024"), path);
+    // A file is not a folder: the folder it is in.
+    QCOMPARE(existingFolder(video.fileName()), path + "/Series/Season 1");
+    QCOMPARE(existingFolder(QString()), QString());
 }
 
 QTEST_GUILESS_MAIN(MediaFilesTest)

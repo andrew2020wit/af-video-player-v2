@@ -118,4 +118,24 @@ QString nextVideoFile(const QString &videoPath) {
     return next.isEmpty() ? QString() : video.absoluteDir().filePath(next);
 }
 
+QString existingFolder(const QString &path) {
+    if (path.isEmpty()) {
+        return {};
+    }
+
+    QString folder = QDir::cleanPath(QFileInfo(path).absoluteFilePath());
+
+    while (!QFileInfo(folder).isDir()) {
+        const QString parent = QFileInfo(folder).absolutePath();
+
+        if (parent == folder) {
+            return {};
+        }
+
+        folder = parent;
+    }
+
+    return folder;
+}
+
 } // namespace afvp

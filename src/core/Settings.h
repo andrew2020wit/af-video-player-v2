@@ -54,7 +54,8 @@ struct Settings {
     int historySize = 100;
     // A watched file (I-76) opens from the beginning, not from the saved position.
     bool restartWatched = true;
-    QString lastOpenFolder;
+    // The last opened video: the file open dialog starts in its folder with it selected (I-86).
+    QString lastOpenFile;
     WindowGeometry window;
 
     QString effectiveAudioLanguage() const;

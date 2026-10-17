@@ -58,7 +58,7 @@ void StorageTest::settingsRoundTrip() {
     settings.secondaryOverlayFontSize = 24;
     settings.historySize = 7;
     settings.restartWatched = false;
-    settings.lastOpenFolder = "D:/Films";
+    settings.lastOpenFile = "D:/Films/Movie.mkv";
     settings.window = {-1200, 40, 1000, 700, true, false};
 
     const QJsonObject json = settings.toJson();

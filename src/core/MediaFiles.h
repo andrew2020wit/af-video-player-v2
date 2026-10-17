@@ -18,4 +18,8 @@ int compareFileNames(const QString &first, const QString &second);
 // The next video file after `videoPath` in its folder in the natural order (I-16); empty for the last one.
 QString nextVideoFile(const QString &videoPath);
 
+// `path` itself if it is an existing folder, otherwise its nearest existing parent folder up to the root of the
+// drive (I-86); empty when none exists (e.g. the drive is removed) or `path` is empty.
+QString existingFolder(const QString &path);
+
 } // namespace afvp

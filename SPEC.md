@@ -250,6 +250,7 @@ subtitles for the video during the export.
 | I-14 | Save the position periodically (every N seconds + on pause/close); keep the settings and the history in JSON files in the user directories of the OS (see 3.4) | P1 |
 | I-15 | Removing entries from the history: the ✕ button on a hovered entry of the start page removes it at once, on a series header (I-76) — all its entries after a confirmation; clearing the whole history — in the settings. The history size is a setting (1–1000 files) | P3 |
 | I-16 | "Next file in the folder" (next episode) | P2 |
+| I-86 | The file open dialog starts where the last video was opened. Rules — below | P2 |
 | I-56 | The start page: opening a video and the history. Description — below | P1 |
 | I-57 | The "Subtitles" dialog in the player: choice of the main and secondary files, export of embedded ones (I-08) | P1 |
 | I-58 | Back to the start page from the player (a button on the panel, `Ctrl+H`) | P1 |
@@ -267,6 +268,13 @@ subtitles for the video during the export.
 
 The chosen video starts playing at once. From the file manager, the command line or by drag & drop the video opens
 at once, without the start page.
+
+**The file open dialog (I-86)** — "Open video…" on the start page and "Open file" on the panel (I-10). The player
+remembers the last opened video, however it was opened (the dialog, the history, drag & drop, the command line),
+also between runs (`lastOpenFile`, 3.4). The dialog opens in the folder of that video with the video selected; when
+the video no longer exists — in its folder without a selection; when the folder no longer exists — in its nearest
+existing parent folder, up to the root of the drive; when none exists (a removed drive) or no video has been opened
+yet — in the user's videos folder.
 
 **Series (I-76).** The history on the start page is grouped by folders (groups are ordered by the most recent
 opening in them). A folder with two or more video files on disk is a series: one header row with the folder name,
@@ -313,7 +321,7 @@ Changes apply at once and are saved in the history (I-13).
 
 **The control panel** (F-12): play/pause, progress bar, time, the buttons "Subtitles" (`CC`, I-57), "Open file"
 (I-10), "Start page" (I-58), "Settings" (I-50), "Full screen" (I-30). "Open file" (I-10) shows the system file
-dialog in the folder of the current video; on cancel the playback continues. While the subtitle list is open
+dialog as on the start page (I-86); on cancel the playback continues. While the subtitle list is open
 (F-42) the panel is hidden — the list takes the whole window; the panel appears again when the list closes.
 
 **The video context menu** — a right click on the video (in the subtitle list a right click marks a cue, F-45): "Subtitles on video (S)" (I-22, a check item) and the "Audio track (A)" submenu (I-02).
@@ -581,7 +589,7 @@ Decisions on former open questions (2026-10-14).
   "secondaryOverlayFontSize": 30,
   "historySize": 100,
   "restartWatched": true,
-  "lastOpenFolder": null,
+  "lastOpenFile": null,
   "window": {"x": 141, "y": 130, "width": 1280, "height": 760, "maximized": false, "fullScreen": false}
 }
 ```
@@ -596,7 +604,7 @@ Decisions on former open questions (2026-10-14).
 - `showSubtitleOverlay` — subtitles on video (I-22); `mainOverlayFontSize`, `secondaryOverlayFontSize` — their
   font sizes, 10–72, 34 and 30 by default.
 - `volume`, `muted` — I-31; `historySize` — I-15 (1–1000, 100 by default); `restartWatched` — a watched file opens
-  from the beginning (I-76, `true` by default); `lastOpenFolder` — the initial folder of the file open dialog.
+  from the beginning (I-76, `true` by default); `lastOpenFile` — the last opened video, the start of the file open dialog (I-86).
 - `window` — the window at the last close (I-75): the position and size of the normal (not maximized) window in
   logical pixels and its state. `null` until the first close; a size smaller than 640×400 is invalid.
 

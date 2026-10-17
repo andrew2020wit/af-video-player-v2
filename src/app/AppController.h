@@ -46,7 +46,10 @@ class AppController : public QObject {
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY settingsChanged)
     Q_PROPERTY(int historySize READ historySize WRITE setHistorySize NOTIFY settingsChanged)
     Q_PROPERTY(bool restartWatched READ restartWatched WRITE setRestartWatched NOTIFY settingsChanged)
+    // The file open dialog (I-86): the folder of the last opened video or its nearest existing parent, and the
+    // video itself when it still exists (empty otherwise).
     Q_PROPERTY(QString openFolderUrl READ openFolderUrl NOTIFY settingsChanged)
+    Q_PROPERTY(QString openFileUrl READ openFileUrl NOTIFY settingsChanged)
 
     // History by folder (I-76): [{folder, folderName, isSeries, watchedCount, videoCount, continuePath,
     // continueName, lastOpened, entries: [{path, name, folder, progress, watched, lastOpened}]}].
@@ -106,6 +109,7 @@ public:
     bool restartWatched() const;
     void setRestartWatched(bool restart);
     QString openFolderUrl() const;
+    QString openFileUrl() const;
 
     QVariantList history() const;
 
