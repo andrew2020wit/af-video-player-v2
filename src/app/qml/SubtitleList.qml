@@ -19,6 +19,7 @@ Rectangle {
     signal subtitlesDialogRequested()
     signal exportRequested()
     signal nextVideoRequested()
+    signal settingsRequested()
     // Close the list and continue playback.
     signal closeRequested()
 
@@ -156,19 +157,40 @@ Rectangle {
         }
     }
 
-    // Close the list and continue playback (F-42).
-    ToolButton {
+    // The top right corner: closing the list (F-42) and the settings (I-50).
+    Column {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: 8
         anchors.rightMargin: 24
-        text: "✕"
-        font.pixelSize: 22
-        focusPolicy: Qt.NoFocus
+        spacing: 4
 
-        onClicked: list.closeRequested()
+        // Close the list and continue playback (F-42).
+        ToolButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "✕"
+            font.pixelSize: 22
+            focusPolicy: Qt.NoFocus
 
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Continue (Space)")
+            onClicked: list.closeRequested()
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Continue (Space)")
+        }
+
+        // The settings cover the list; it is still open when they are closed.
+        ToolButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "⚙"
+            font.pixelSize: 22
+            // A monochrome glyph in the text colour; the default font falls back to a pale colour emoji on Windows.
+            font.family: "Segoe UI Symbol"
+            focusPolicy: Qt.NoFocus
+
+            onClicked: list.settingsRequested()
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Settings (Ctrl+,)")
+        }
     }
 }

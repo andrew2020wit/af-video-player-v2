@@ -348,6 +348,7 @@ Item {
         onSubtitlesDialogRequested: subtitlesDialog.open()
         onExportRequested: exportDialogs.start()
         onNextVideoRequested: page.openNextVideo()
+        onSettingsRequested: page.settingsRequested()
         onCloseRequested: page.closeList()
     }
 

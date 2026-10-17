@@ -445,10 +445,12 @@ The logic lives in the C++ core and is covered by tests (I-52, 3.4).
 | I-83 | The application version in the window title next to the name: `AF Video Player 0.1.1`, with an open video — `movie.mkv — AF Video Player 0.1.1`. The last number of the version (build) is increased with every code change | P1 |
 | I-84 | **The application icon:** a video screen with the play button above the two-column subtitle list (F-42, F-43) — the translation on the left (green), the cue time, the original on the right, the current cue in the centre highlighted. The executable and the window on Windows (`.ico`), the `.app` bundle on macOS (`.icns`), the window and the `.desktop` file on Linux (PNG, SVG). The source is `packaging/icons/af-video-player.svg`; the other files are generated from it by `scripts/make-icons.ps1` | P1 |
 
-**The settings page (I-50)** is a full-window page in the same window, with a "← Back" button (and `Esc`). It is
-opened by the ⚙ button on the start page and from the player (the ⚙ button on the control panel, `Ctrl+,`). When the
-video was playing, it is paused and continues after the settings are closed; a paused video stays paused. While
-the settings are open, the mouse (clicks, the wheel) does not act on the player below them.
+**The settings page (I-50)** is a full-window page in the same window over the player, with the sections centred
+and a `✕` close button in the top right corner (and `Esc`). It is opened by the ⚙ button on the start page and
+from the player (the ⚙ button on the control panel and under the `✕` button of the subtitle list, `Ctrl+,`); the
+subtitle list stays open under the settings. When the video was playing, it is paused and continues after the
+settings are closed; a paused video stays paused. While the settings are open, the mouse (clicks, the wheel) does
+not act on the player below them.
 Changes apply and are saved at once; an invalid value is highlighted and not saved. Sections (fields — see
 `settings.json`, 3.4):
 

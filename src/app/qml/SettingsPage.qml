@@ -8,7 +8,7 @@ Page {
 
     property string mpvVersion: ""
 
-    signal backRequested()
+    signal closeRequested()
 
     // The wheel outside the scrollable content does not reach the player below (no volume change).
     wheelEnabled: true
@@ -37,23 +37,25 @@ Page {
     }
 
     header: ToolBar {
-        RowLayout {
-            anchors.fill: parent
-            spacing: 8
+        Label {
+            anchors.centerIn: parent
+            text: qsTr("Settings")
+            font.pixelSize: 18
+            font.bold: true
+        }
 
-            ToolButton {
-                text: qsTr("← Back")
-                focusPolicy: Qt.NoFocus
+        ToolButton {
+            anchors.right: parent.right
+            anchors.rightMargin: 24
+            anchors.verticalCenter: parent.verticalCenter
+            text: "✕"
+            font.pixelSize: 22
+            focusPolicy: Qt.NoFocus
 
-                onClicked: settingsPage.backRequested()
-            }
+            onClicked: settingsPage.closeRequested()
 
-            Label {
-                Layout.fillWidth: true
-                text: qsTr("Settings")
-                font.pixelSize: 18
-                font.bold: true
-            }
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Close (Esc)")
         }
     }
 
@@ -63,9 +65,10 @@ Page {
         anchors.fill: parent
         contentWidth: availableWidth
 
+        // The sections are centred in the window.
         ColumnLayout {
-            x: 24
-            width: scrollView.availableWidth - 48
+            width: Math.min(900, scrollView.availableWidth - 48)
+            x: (scrollView.availableWidth - width) / 2
             spacing: 16
 
             Item {
