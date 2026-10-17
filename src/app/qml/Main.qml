@@ -241,7 +241,7 @@ ApplicationWindow {
             visible: window.settingsOpen
             mpvVersion: player.mpv.mpvVersion
 
-            onBackRequested: window.closeSettings()
+            onCloseRequested: window.closeSettings()
         }
 
         DropArea {
