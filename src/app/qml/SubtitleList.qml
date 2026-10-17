@@ -161,7 +161,7 @@ Rectangle {
         }
     }
 
-    // The top right corner: closing the list (F-42) and the settings (I-50).
+    // The top right corner: closing the list (F-42), the settings (I-50) and the subtitles (I-57).
     Column {
         anchors.top: parent.top
         anchors.right: parent.right
@@ -195,6 +195,20 @@ Rectangle {
 
             ToolTip.visible: hovered
             ToolTip.text: qsTr("Settings (Ctrl+,)")
+        }
+
+        // The "Subtitles" dialog, as the CC button of the control panel (I-57).
+        ToolButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "CC"
+            font.pixelSize: 15
+            font.bold: true
+            focusPolicy: Qt.NoFocus
+
+            onClicked: list.subtitlesDialogRequested()
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Subtitles")
         }
     }
 }

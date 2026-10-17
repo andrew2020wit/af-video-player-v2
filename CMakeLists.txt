@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(AfVideoPlayer
-    VERSION 0.1.31
+    VERSION 0.1.32
     DESCRIPTION "Desktop video player for watching movies with subtitles, aimed at language learning"
     HOMEPAGE_URL "https://github.com/andrew2020wit/af-video-player-v2"
     LANGUAGES C CXX)

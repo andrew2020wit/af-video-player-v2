@@ -88,7 +88,8 @@ dictionary, translate, jump to a time.
   the top right corner or a click on a cue time (F-46) close the list and continue playback. While the
   list is open the control panel is hidden, and clicks and the mouse wheel outside the cues do not act on the
   video (the wheel only scrolls the list, never changes the volume). The list also opens when the video has played
-  to the end (I-16).
+  to the end (I-16). Below the `✕` button are the buttons "Settings" (I-50) and "Subtitles" (`CC`, I-57), as in
+  the control panel.
 - **F-43. A list row** contains, from left to right:
   - the secondary subtitle text (dark green), see F-44;
   - the start time of the cue (grey); a click — F-46;
