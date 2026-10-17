@@ -103,6 +103,16 @@ ApplicationWindow {
         videoDialog.open()
     }
 
+    // Batch export (I-87): one at a time; the button brings its window to the front while it runs.
+    function startBatchExport() {
+        if (App.batchExport.running) {
+            batchWindow.present()
+        } else {
+            batchFolderDialog.currentFolder = App.openFolderUrl
+            batchFolderDialog.open()
+        }
+    }
+
     function goToStartPage() {
         settingsOpen = false
         resumeAfterSettings = false
@@ -201,6 +211,9 @@ ApplicationWindow {
     onClosing: {
         player.savePlayback()
         saveGeometry()
+        // The application quits with the main window.
+        App.batchExport.cancel()
+        batchWindow.close()
     }
     onXChanged: normalGeometryTimer.restart()
     onYChanged: normalGeometryTimer.restart()
@@ -239,6 +252,7 @@ ApplicationWindow {
             onOpenFileRequested: window.openVideoDialog()
             onSettingsRequested: window.openSettings()
             onFullScreenRequested: window.toggleFullScreen()
+            onBatchExportRequested: window.startBatchExport()
             onHistoryItemClicked: path => {
                 player.openVideo(path)
                 root.forceActiveFocus()
@@ -289,6 +303,24 @@ ApplicationWindow {
             player.openVideo(selectedFile)
             root.forceActiveFocus()
         }
+    }
+
+    FolderDialog {
+        id: batchFolderDialog
+
+        title: qsTr("Folder with videos")
+
+        onAccepted: {
+            App.batchExport.start(App.toLocalPath(selectedFolder))
+            batchWindow.present()
+        }
+    }
+
+    BatchExportWindow {
+        id: batchWindow
+
+        mainWindow: window
+        palette: window.palette
     }
 
     Dialog {

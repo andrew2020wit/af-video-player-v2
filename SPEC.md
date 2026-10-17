@@ -143,6 +143,7 @@ Priorities: **P1** — required for the first version, **P2** — desirable, **P
 | I-06 | Automatic search for external subtitles next to the video (`movie.srt`, `movie.en.srt`, `movie.uk.vtt`, `movie.en.forced.srt`, `movie.en.2.srt` — see the export file names of I-08, the `Subs/` folder). When the user has not chosen subtitles for this video yet, the found files are assigned as main and secondary by the language in the file name (I-55); the automatic search does not change the user's choice | P2 |
 | I-08 | **Export of embedded subtitles** from a video file to an external file (SRT / VTT / ASS) — of one or all text tracks. It should be **fast**: all tracks in one pass over the file, in the background, with progress and cancellation. It is the only way to use embedded subtitles (P-12). The scenario is below, the technique — 3.2 | P1 |
 | I-85 | **Automatic export of embedded subtitles** for a new video without subtitle files: a track in the studied language and a track in the native one are exported next to the video and become its subtitles. Rules — below | P2 |
+| I-87 | **Batch export of embedded subtitles** of all videos in a folder, started from the start page, in a separate progress window. Rules — below | P2 |
 
 **Export scenario (I-08):**
 
@@ -240,6 +241,25 @@ language; when there is no track in the studied language, the native one becomes
 (as in I-06). The files are assigned even when another video was opened meanwhile, but not when the user has chosen
 subtitles for the video during the export.
 
+**Batch export (I-87).** The "Batch export…" button on the start page (I-56) opens the system folder dialog (it
+starts in the folder of the last video, as in I-86). For each video file directly in the chosen folder (not in
+subfolders), in the natural order of names (I-16):
+
+- all embedded text tracks are exported next to the video, except forced ones (as in I-85);
+- the files get the names of I-08; a track whose file already exists is skipped — it was exported earlier. Existing
+  files are never replaced;
+- a video without text tracks is skipped silently.
+
+The export runs in the background in a separate window (not a dialog of the main window): the folder, "Video N of
+M" with the file name, a progress bar of the whole folder, the number of saved files and the "Cancel" button. The
+player can be used meanwhile. "Cancel" or closing the window stops the export: the files of the finished videos
+stay, the current video leaves nothing (I-08). When the export ends the window closes itself. The videos that
+failed are listed afterwards in one error dialog; a folder without video files is reported in a dialog too.
+
+One batch export runs at a time: while it runs, the button brings its window to the front instead of opening
+another one. It does not depend on the export of the open video (I-08, I-85). Closing the main window cancels it.
+After the export the subtitle search of the open video (I-06) runs again.
+
 ### 2.2. Files and history
 
 | ID   | Requirement | Priority |
@@ -264,7 +284,7 @@ subtitles for the video during the export.
   shown but stay in `history.json` — to find a moved file (I-12); they, like the oldest entries, are pushed out by
   the `historySize` limit; a hovered entry gets a hand cursor and an outline; entries of series are grouped
   (I-76);
-- in the top right corner: the "GitHub" button, which opens the project page in the browser, the settings
+- in the top right corner: the "Batch export…" button (I-87), the "GitHub" button, which opens the project page in the browser, the settings
   button (I-50) and the full screen button (I-30); `F` toggles full screen here too, `Esc` leaves it.
 
 The chosen video starts playing at once. From the file manager, the command line or by drag & drop the video opens

@@ -4,6 +4,8 @@
 #include <QFileInfo>
 #include <QStringList>
 
+#include <algorithm>
+
 namespace afvp {
 
 namespace {
@@ -100,6 +102,27 @@ int compareFileNames(const QString &first, const QString &second) {
     const int result = naturalCompare(firstInfo.completeBaseName(), secondInfo.completeBaseName());
 
     return result != 0 ? result : naturalCompare(firstInfo.suffix(), secondInfo.suffix());
+}
+
+QStringList videoFilesInFolder(const QString &folder) {
+    const QDir dir(folder);
+    QStringList names;
+
+    for (const QString &file : dir.entryList(QDir::Files)) {
+        if (isVideoFileName(file)) {
+            names.append(file);
+        }
+    }
+
+    std::sort(names.begin(), names.end(),
+              [](const QString &first, const QString &second) { return compareFileNames(first, second) < 0; });
+    QStringList paths;
+
+    for (const QString &name : names) {
+        paths.append(dir.absoluteFilePath(name));
+    }
+
+    return paths;
 }
 
 QString nextVideoFile(const QString &videoPath) {

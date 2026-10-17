@@ -12,6 +12,8 @@ private slots:
     void trackFlags();
     void choice_data();
     void choice();
+    void batch_data();
+    void batch();
 };
 
 namespace {
@@ -102,6 +104,41 @@ void AutoExportTest::choice() {
 
     QCOMPARE(result.mainStreamIndex, main);
     QCOMPARE(result.secondaryStreamIndex, secondary);
+}
+
+void AutoExportTest::batch_data() {
+    QTest::addColumn<QStringList>("tracks");
+    QTest::addColumn<QStringList>("existing");
+    QTest::addColumn<QStringList>("names");
+
+    QTest::newRow("no tracks") << QStringList() << QStringList() << QStringList();
+    QTest::newRow("all text tracks") << QStringList{"2|eng||", "3|ukr|s|", "4|||"} << QStringList()
+                                     << QStringList{"movie.en.srt", "movie.uk.sdh.srt", "movie.und.srt"};
+    QTest::newRow("forced and bitmap skipped") << QStringList{"2|eng|f|", "3|eng||Forced", "4|eng|b|", "5|eng||"}
+                                               << QStringList() << QStringList{"movie.en.srt"};
+    QTest::newRow("same language numbered") << QStringList{"2|eng||", "3|eng||", "4|eng||"} << QStringList()
+                                            << QStringList{"movie.en.srt", "movie.en.2.srt", "movie.en.3.srt"};
+    QTest::newRow("exported earlier skipped")
+        << QStringList{"2|eng||", "3|eng||", "4|ukr||"} << QStringList{"movie.en.srt", "movie.uk.srt"}
+        << QStringList{"movie.en.2.srt"};
+    QTest::newRow("all exported earlier") << QStringList{"2|eng||"} << QStringList{"movie.en.srt"} << QStringList();
+}
+
+void AutoExportTest::batch() {
+    QFETCH(QStringList, tracks);
+    QFETCH(QStringList, existing);
+    QFETCH(QStringList, names);
+
+    const QList<BatchExportItem> items =
+        chooseBatchExportTracks(QStringLiteral("movie"), parseTracks(tracks),
+                                [&existing](const QString &name) { return existing.contains(name); });
+    QStringList result;
+
+    for (const BatchExportItem &item : items) {
+        result.append(item.fileName);
+    }
+
+    QCOMPARE(result, names);
 }
 
 QTEST_GUILESS_MAIN(AutoExportTest)

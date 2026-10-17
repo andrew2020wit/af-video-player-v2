@@ -15,6 +15,7 @@ private slots:
     void naturalOrder_data();
     void naturalOrder();
     void fileNameOrder();
+    void folderVideos();
     void nextVideo();
     void existingFolders();
 };
@@ -58,6 +59,28 @@ void MediaFilesTest::fileNameOrder() {
     QVERIFY(compareFileNames("e9.mp4", "e10.avi") < 0);
     QVERIFY(compareFileNames("e1.avi", "e1.mkv") < 0);
     QCOMPARE(compareFileNames("e1.mkv", "e1.mkv"), 0);
+}
+
+void MediaFilesTest::folderVideos() {
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    QVERIFY(QDir(root.path()).mkpath("Extras"));
+
+    for (const QString &name : {"s01e10.mkv", "s01e02.mp4", "s01e01.en.srt", "notes.txt", "S01E09.avi", "Extras/bonus.mkv"}) {
+        QFile file(root.filePath(name));
+        QVERIFY(file.open(QIODevice::WriteOnly));
+    }
+
+    QStringList names;
+
+    for (const QString &path : videoFilesInFolder(root.path())) {
+        QVERIFY(QFileInfo(path).isAbsolute());
+        names.append(QFileInfo(path).fileName());
+    }
+
+    // Subfolders are not searched.
+    QCOMPARE(names, (QStringList{"s01e02.mp4", "S01E09.avi", "s01e10.mkv"}));
+    QCOMPARE(videoFilesInFolder(root.filePath("missing")), QStringList());
 }
 
 void MediaFilesTest::nextVideo() {

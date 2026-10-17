@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include <QStringList>
 
 namespace afvp {
 
@@ -14,6 +15,9 @@ int naturalCompare(const QString &first, const QString &second);
 
 // File names in the natural order of names without extensions, then of extensions: "Movie.mkv" < "Movie 2.mkv".
 int compareFileNames(const QString &first, const QString &second);
+
+// Video files directly in a folder (not in subfolders), as absolute paths in the natural order (I-87).
+QStringList videoFilesInFolder(const QString &folder);
 
 // The next video file after `videoPath` in its folder in the natural order (I-16); empty for the last one.
 QString nextVideoFile(const QString &videoPath);

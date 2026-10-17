@@ -37,7 +37,4 @@ QList<HistoryGroup> groupHistory(const QList<HistoryEntry> &entries,
                                  const std::function<bool(const QString &)> &fileExists,
                                  const std::function<QStringList(const QString &)> &videoFilesIn);
 
-// Video files of a folder on disk, as absolute paths.
-QStringList videoFilesInFolder(const QString &folder);
-
 } // namespace afvp

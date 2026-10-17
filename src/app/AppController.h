@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AutoExport.h"
+#include "BatchExporter.h"
 #include "ExportNaming.h"
 #include "History.h"
 #include "Settings.h"
@@ -69,6 +70,8 @@ class AppController : public QObject {
 
     Q_PROPERTY(bool exportRunning READ exportRunning NOTIFY exportStateChanged)
     Q_PROPERTY(double exportProgress READ exportProgress NOTIFY exportStateChanged)
+    // Batch export of a folder (I-87).
+    Q_PROPERTY(BatchExporter *batchExport READ batchExport CONSTANT)
 
     Q_PROPERTY(QVariantList languages READ languages CONSTANT)
     Q_PROPERTY(QString appVersion READ appVersion CONSTANT)
@@ -125,6 +128,7 @@ public:
 
     bool exportRunning() const;
     double exportProgress() const;
+    BatchExporter *batchExport();
 
     QVariantList languages() const;
     QString appVersion() const;
@@ -256,4 +260,5 @@ private:
     std::atomic_bool m_exportCancel = false;
     bool m_exportRunning = false;
     double m_exportProgress = 0;
+    BatchExporter m_batchExport;
 };

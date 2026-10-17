@@ -34,12 +34,14 @@ qt_add_qml_module(af-video-player
         qml/SubtitleOverlay.qml
         qml/SubtitlesDialog.qml
         qml/ExportDialogs.qml
+        qml/BatchExportWindow.qml
         qml/SettingsPage.qml
         qml/LanguagePicker.qml
         qml/UrlTemplateField.qml
         qml/NumberField.qml
     SOURCES
         AppController.cpp AppController.h
+        BatchExporter.cpp BatchExporter.h
         FramePreviewProvider.cpp FramePreviewProvider.h
         HandCursorFilter.cpp HandCursorFilter.h
         MpvObject.cpp MpvObject.h

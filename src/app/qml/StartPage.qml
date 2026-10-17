@@ -17,6 +17,7 @@ Rectangle {
     signal openFileRequested()
     signal settingsRequested()
     signal fullScreenRequested()
+    signal batchExportRequested()
     signal historyItemClicked(string path)
 
     function toggleFolder(folder) {
@@ -32,6 +33,18 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 12
         spacing: 8
+
+        // Export of the embedded subtitles of all videos in a folder (I-87).
+        ToolButton {
+            anchors.verticalCenter: parent.verticalCenter
+            text: qsTr("Batch export…")
+            focusPolicy: Qt.NoFocus
+
+            onClicked: startPage.batchExportRequested()
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Export the embedded subtitles of all videos in a folder")
+        }
 
         // The project page in the browser (I-56).
         ToolButton {

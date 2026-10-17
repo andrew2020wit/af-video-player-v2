@@ -1,8 +1,6 @@
 #include "HistoryGroups.h"
 
 #include <QDir>
-#include <QFile>
-#include <QTemporaryDir>
 #include <QTest>
 
 using namespace afvp;
@@ -18,7 +16,6 @@ private slots:
     void continuePath_data();
     void continuePath();
     void singleVideoIsNotSeries();
-    void videoFilesOnDisk();
 };
 
 namespace {
@@ -114,21 +111,6 @@ void HistoryGroupsTest::continuePath() {
 
 void HistoryGroupsTest::singleVideoIsNotSeries() {
     QVERIFY(!group({entry(p("Film/movie.mkv"), 100)}).front().isSeries());
-}
-
-void HistoryGroupsTest::videoFilesOnDisk() {
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    for (const QString name : {"e1.mkv", "e2.MP4", "e1.srt", "notes.txt"}) {
-        QFile file(dir.filePath(name));
-        QVERIFY(file.open(QIODevice::WriteOnly));
-    }
-
-    QStringList files = videoFilesInFolder(dir.path());
-    files.sort();
-
-    QCOMPARE(files, QStringList({dir.filePath("e1.mkv"), dir.filePath("e2.MP4")}));
 }
 
 QTEST_GUILESS_MAIN(HistoryGroupsTest)

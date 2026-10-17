@@ -5,6 +5,8 @@
 #include <QList>
 #include <QString>
 
+#include <functional>
+
 namespace afvp {
 
 // A forced track holds only part of the text: by the container flag or the word "forced" in the title (I-85).
@@ -27,5 +29,17 @@ struct AutoExportChoice {
 // the studied language the native one becomes main; equal languages give no secondary track.
 AutoExportChoice chooseAutoExportTracks(const QList<EmbeddedSubtitleTrack> &tracks, const QString &studiedLanguage,
                                         const QString &nativeLanguage);
+
+// A track of the batch export (I-87) and the name of its file in the video folder.
+struct BatchExportItem {
+    EmbeddedSubtitleTrack track;
+    QString fileName;
+};
+
+// Tracks of one video for the batch export (I-87): all text tracks except forced ones, with the file names of I-08.
+// A track whose file already exists (fileExists) was exported earlier and is skipped.
+QList<BatchExportItem> chooseBatchExportTracks(const QString &videoBaseName,
+                                               const QList<EmbeddedSubtitleTrack> &tracks,
+                                               const std::function<bool(const QString &)> &fileExists);
 
 } // namespace afvp

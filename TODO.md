@@ -30,6 +30,9 @@ Done but not verified.
   after "Replace" keeps the existing files; an export finished after another video was opened offers nothing.
 - [ ] Manually (0.1.25): the automatic export of embedded subtitles (I-85) when a new video without subtitle
   files is opened: the chosen tracks, the files next to the video, the assigned main and secondary subtitles.
+- [ ] Manually (0.1.34): the batch export of a folder (I-87): the files next to the videos, skipped forced tracks
+  and earlier exports, the window closing itself, "Cancel", the button bringing the running window to the front,
+  the player usable meanwhile.
 - [ ] Seeking repeats while `←`/`→` are held (I-33): there is no separate code, it should work through key
   auto-repeat.
 

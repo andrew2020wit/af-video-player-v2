@@ -91,6 +91,17 @@ AppController::AppController(QObject *parent)
     : QObject(parent), m_settingsPath(settingsFilePath()), m_historyPath(historyFilePath()) {
     loadSettings();
     loadHistory();
+
+    connect(&m_batchExport, &BatchExporter::finished, this, [this](bool cancelled, const QStringList &errors) {
+        // The open video may be in the folder: its new files are found (I-06).
+        refreshFoundSubtitles();
+
+        if (!cancelled && m_batchExport.videoCount() == 0) {
+            emit errorOccurred(tr("The folder has no video files:\n%1").arg(m_batchExport.folder()));
+        } else if (!errors.isEmpty()) {
+            emit errorOccurred(tr("Batch export failed for some videos:\n\n%1").arg(errors.join(u'\n')));
+        }
+    });
 }
 
 AppController::~AppController() {
@@ -377,6 +388,10 @@ bool AppController::exportRunning() const {
 
 double AppController::exportProgress() const {
     return m_exportProgress;
+}
+
+BatchExporter *AppController::batchExport() {
+    return &m_batchExport;
 }
 
 QVariantList AppController::languages() const {

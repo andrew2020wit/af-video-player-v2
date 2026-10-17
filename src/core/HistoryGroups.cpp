@@ -2,7 +2,6 @@
 
 #include "MediaFiles.h"
 
-#include <QDir>
 #include <QFileInfo>
 
 #include <algorithm>
@@ -92,19 +91,6 @@ QList<HistoryGroup> groupHistory(const QList<HistoryEntry> &entries,
     }
 
     return groups;
-}
-
-QStringList videoFilesInFolder(const QString &folder) {
-    const QDir dir(folder);
-    QStringList files;
-
-    for (const QString &name : dir.entryList(QDir::Files)) {
-        if (isVideoFileName(name)) {
-            files.append(dir.filePath(name));
-        }
-    }
-
-    return files;
 }
 
 } // namespace afvp

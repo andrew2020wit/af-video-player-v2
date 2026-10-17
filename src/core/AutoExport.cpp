@@ -74,4 +74,29 @@ AutoExportChoice chooseAutoExportTracks(const QList<EmbeddedSubtitleTrack> &trac
     return {studied, native};
 }
 
+QList<BatchExportItem> chooseBatchExportTracks(const QString &videoBaseName,
+                                               const QList<EmbeddedSubtitleTrack> &tracks,
+                                               const std::function<bool(const QString &)> &fileExists) {
+    QList<EmbeddedSubtitleTrack> exported;
+
+    for (const EmbeddedSubtitleTrack &track : tracks) {
+        if (track.isText && !isForcedTrack(track)) {
+            exported.append(track);
+        }
+    }
+
+    // The names a full export would give; an existing file is not replaced and not numbered further.
+    const QStringList names =
+        exportFileNames(videoBaseName, exported, ConflictPolicy::Replace, [](const QString &) { return false; });
+    QList<BatchExportItem> items;
+
+    for (qsizetype i = 0; i < exported.size(); ++i) {
+        if (!fileExists(names[i])) {
+            items.append({exported[i], names[i]});
+        }
+    }
+
+    return items;
+}
+
 } // namespace afvp
