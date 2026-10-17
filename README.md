@@ -93,6 +93,12 @@ history are stored separately (see below) and are kept.
 - The player does not register file associations: to open videos by a double click, choose `af-video-player`
   in "Open with" of the file manager.
 
+## Tip: a book from subtitles
+
+The subtitles of a film can also be read as a book with a translation. Import the subtitle files into
+[AF JSON Book Creator](https://andrew2020wit.github.io/af-json-book-creator/) to create such a book, save it in the
+JSON format and open it in [Foreign Reader](https://andrew2020wit.github.io/foreign-reader/).
+
 ## Build
 
 Requires CMake ≥ 3.21, a C++20 compiler, Qt ≥ 6.8 (modules qtbase, qtdeclarative, qtsvg), libmpv and FFmpeg.
