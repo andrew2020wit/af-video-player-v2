@@ -1,9 +1,11 @@
 #pragma once
 
+#include "AutoExport.h"
 #include "ExportNaming.h"
 #include "History.h"
 #include "Settings.h"
 #include "SubtitleCue.h"
+#include "SubtitleExtractor.h"
 #include "SubtitleListModel.h"
 #include "SubtitleSearch.h"
 
@@ -12,7 +14,10 @@
 #include <QtQml/qqmlregistration.h>
 
 #include <atomic>
+#include <optional>
 #include <thread>
+
+class QDir;
 
 // Application state for QML: settings, history, the open video and its subtitles, export of embedded subtitles.
 class AppController : public QObject {
@@ -215,6 +220,13 @@ private:
     bool setUrlTemplate(QString &target, const QString &url);
     void setFontSize(int &target, int size);
     QList<afvp::EmbeddedSubtitleTrack> selectedTracks(const QVariantList &streamIndexes) const;
+    // Exports the tracks of a new video without subtitle files and assigns them (I-85).
+    void startAutoExport();
+    // automatic: the tracks of the automatic export, assigned to the video afterwards (I-85).
+    void runExport(const QList<afvp::EmbeddedSubtitleTrack> &tracks, const QDir &folder, afvp::ConflictPolicy policy,
+                   const std::optional<afvp::AutoExportChoice> &automatic);
+    void assignAutoExported(const QString &videoPath, const afvp::AutoExportChoice &choice,
+                            const QList<afvp::ExtractionTarget> &targets);
     void joinExportThread();
 
     QString m_settingsPath;

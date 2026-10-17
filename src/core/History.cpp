@@ -127,8 +127,10 @@ HistoryEntry *History::find(const QString &path) {
     return const_cast<HistoryEntry *>(std::as_const(*this).find(path));
 }
 
-HistoryEntry &History::touch(const QString &path, qint64 size, const QDateTime &now, const FileExists &fileExists) {
+HistoryEntry &History::touch(const QString &path, qint64 size, const QDateTime &now, const FileExists &fileExists,
+                             bool *isNew) {
     HistoryEntry entry;
+    bool found = false;
     const auto existing = std::find_if(m_entries.begin(), m_entries.end(),
                                        [&path](const HistoryEntry &item) { return samePath(item.path, path); });
 
@@ -136,6 +138,7 @@ HistoryEntry &History::touch(const QString &path, qint64 size, const QDateTime &
         // Another file of another size at the same path starts from scratch.
         if (existing->size == size) {
             entry = *existing;
+            found = true;
         }
 
         m_entries.erase(existing);
@@ -149,6 +152,7 @@ HistoryEntry &History::touch(const QString &path, qint64 size, const QDateTime &
 
         if (moved != m_entries.end()) {
             entry = *moved;
+            found = true;
             m_entries.erase(moved);
             moveSubtitles(entry, folderOf(path), fileExists);
         }
@@ -158,6 +162,10 @@ HistoryEntry &History::touch(const QString &path, qint64 size, const QDateTime &
     entry.size = size;
     entry.lastOpened = now;
     m_entries.prepend(entry);
+
+    if (isNew) {
+        *isNew = !found;
+    }
 
     return m_entries.front();
 }

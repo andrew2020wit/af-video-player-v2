@@ -1,6 +1,7 @@
 #include "AppController.h"
 
 #include "AudioTracks.h"
+#include "AutoExport.h"
 #include "HistoryGroups.h"
 #include "CueText.h"
 #include "JsonFile.h"
@@ -425,9 +426,10 @@ bool AppController::openVideo(const QString &location) {
         return false;
     }
 
+    bool isNew = false;
     afvp::HistoryEntry &entry =
         m_history.touch(fileInfo.absoluteFilePath(), fileInfo.size(), QDateTime::currentDateTimeUtc(),
-                        [](const QString &file) { return QFileInfo::exists(file); });
+                        [](const QString &file) { return QFileInfo::exists(file); }, &isNew);
     const bool restart = m_settings.restartWatched && afvp::isWatched(entry);
     const double startSeconds = restart ? 0.0 : double(entry.positionMs) / 1000.0;
     m_history.trim(m_settings.historySize);
@@ -443,6 +445,10 @@ bool AppController::openVideo(const QString &location) {
     reloadSubtitles();
     emit videoChanged();
     emit videoOpened(m_videoPath, startSeconds);
+
+    if (isNew && m_foundSubtitles.isEmpty()) {
+        startAutoExport();
+    }
 
     return true;
 }
@@ -697,14 +703,40 @@ void AppController::startExport(const QVariantList &streamIndexes, const QString
         return;
     }
 
+    runExport(selectedTracks(streamIndexes), QDir(toLocalPath(folderLocation)),
+              keepBoth ? afvp::ConflictPolicy::KeepBoth : afvp::ConflictPolicy::Replace, std::nullopt);
+}
+
+void AppController::startAutoExport() {
+    if (m_exportRunning || m_videoPath.isEmpty()) {
+        return;
+    }
+
+    const afvp::AutoExportChoice choice =
+        afvp::chooseAutoExportTracks(m_embeddedTracks, m_settings.studiedLanguage, m_settings.nativeLanguage);
+
+    if (choice.isEmpty()) {
+        return;
+    }
+
+    QVariantList streamIndexes{choice.mainStreamIndex};
+
+    if (choice.secondaryStreamIndex >= 0) {
+        streamIndexes.append(choice.secondaryStreamIndex);
+    }
+
+    // An existing file is never replaced.
+    runExport(selectedTracks(streamIndexes), QDir(QFileInfo(m_videoPath).absolutePath()),
+              afvp::ConflictPolicy::KeepBoth, choice);
+}
+
+void AppController::runExport(const QList<afvp::EmbeddedSubtitleTrack> &tracks, const QDir &folder,
+                              afvp::ConflictPolicy policy, const std::optional<afvp::AutoExportChoice> &automatic) {
     joinExportThread();
 
-    const QDir folder(toLocalPath(folderLocation));
-    const QList<afvp::EmbeddedSubtitleTrack> tracks = selectedTracks(streamIndexes);
-    const QStringList names = afvp::exportFileNames(
-        QFileInfo(m_videoPath).completeBaseName(), tracks,
-        keepBoth ? afvp::ConflictPolicy::KeepBoth : afvp::ConflictPolicy::Replace,
-        [&folder](const QString &name) { return folder.exists(name); });
+    const QStringList names =
+        afvp::exportFileNames(QFileInfo(m_videoPath).completeBaseName(), tracks, policy,
+                              [&folder](const QString &name) { return folder.exists(name); });
     QList<afvp::ExtractionTarget> targets;
     QVariantList files;
 
@@ -724,7 +756,7 @@ void AppController::startExport(const QVariantList &streamIndexes, const QString
     emit exportStateChanged();
 
     const QString videoPath = m_videoPath;
-    m_exportThread = std::thread([this, videoPath, targets, files]() {
+    m_exportThread = std::thread([this, videoPath, targets, files, automatic]() {
         QString error;
         const bool ok = afvp::extractSubtitleTracks(
             videoPath, targets,
@@ -742,18 +774,24 @@ void AppController::startExport(const QVariantList &streamIndexes, const QString
 
         QMetaObject::invokeMethod(
             this,
-            [this, ok, cancelled, error, files, videoPath]() {
+            [this, ok, cancelled, error, files, videoPath, targets, automatic]() {
                 m_exportRunning = false;
                 m_exportProgress = ok ? 1.0 : 0.0;
                 emit exportStateChanged();
+
+                if (ok && automatic) {
+                    assignAutoExported(videoPath, *automatic, targets);
+                }
 
                 if (ok) {
                     refreshFoundSubtitles();
                 }
 
                 // Another video may have been opened meanwhile: the files are offered only to their own video.
+                // Automatically exported files are assigned without asking (I-85).
                 const bool sameVideo = afvp::History::samePath(m_videoPath, videoPath);
-                emit exportFinished(ok, cancelled, error, ok && sameVideo ? files : QVariantList());
+                emit exportFinished(ok, cancelled, error,
+                                    ok && sameVideo && !automatic ? files : QVariantList());
             },
             Qt::QueuedConnection);
     });
@@ -761,6 +799,35 @@ void AppController::startExport(const QVariantList &streamIndexes, const QString
 
 void AppController::cancelExport() {
     m_exportCancel = true;
+}
+
+void AppController::assignAutoExported(const QString &videoPath, const afvp::AutoExportChoice &choice,
+                                       const QList<afvp::ExtractionTarget> &targets) {
+    afvp::HistoryEntry *entry = m_history.find(videoPath);
+
+    // The user has chosen subtitles during the export.
+    if (!entry || entry->subtitlesChosen) {
+        return;
+    }
+
+    const auto exportedPath = [&targets](int streamIndex) {
+        for (const afvp::ExtractionTarget &target : targets) {
+            if (target.streamIndex == streamIndex) {
+                return target.outputPath;
+            }
+        }
+
+        return QString();
+    };
+
+    entry->mainSubtitles = exportedPath(choice.mainStreamIndex);
+    entry->secondarySubtitles = exportedPath(choice.secondaryStreamIndex);
+    entry->subtitlesChosen = true;
+    saveHistory();
+
+    if (afvp::History::samePath(m_videoPath, videoPath)) {
+        reloadSubtitles();
+    }
 }
 
 int AppController::findFileByLanguage(const QVariantList &files, const QString &language) const {

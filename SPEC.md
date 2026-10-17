@@ -141,6 +141,7 @@ Priorities: **P1** — required for the first version, **P2** — desirable, **P
 | I-05 | Opening files from the file manager ("Open with"), by drag & drop and as a command line argument. A subtitle file (`.srt`, `.vtt`, `.ass`, `.ssa`) dropped onto the window with an open video becomes its main subtitles (a user's choice, I-06), without an open video it is not opened and a message says so; any other dropped file is opened as a video. The application does not register file type associations (P-16) | P1 |
 | I-06 | Automatic search for external subtitles next to the video (`movie.srt`, `movie.en.srt`, `movie.uk.vtt`, `movie.en.forced.srt`, `movie.en.2.srt` — see the export file names of I-08, the `Subs/` folder). When the user has not chosen subtitles for this video yet, the found files are assigned as main and secondary by the language in the file name (I-55); the automatic search does not change the user's choice | P2 |
 | I-08 | **Export of embedded subtitles** from a video file to an external file (SRT / VTT / ASS) — of one or all text tracks. It should be **fast**: all tracks in one pass over the file, in the background, with progress and cancellation. It is the only way to use embedded subtitles (P-12). The scenario is below, the technique — 3.2 | P1 |
+| I-85 | **Automatic export of embedded subtitles** for a new video without subtitle files: a track in the studied language and a track in the native one are exported next to the video and become its subtitles. Rules — below | P2 |
 
 **Export scenario (I-08):**
 
@@ -208,13 +209,35 @@ exists.
 The result of the automatic search is not saved as the user's choice (like the automatic choice of the audio track,
 I-54) and is recalculated every time the video is opened and when the studied or native language changes. **The
 user's choice** is any change in the "Subtitles" dialog (I-57), a subtitle file dropped onto the window (I-05) or
-acceptance of the exported files (I-08, step 6): then both current files, including one found by the automatic
+acceptance of the exported files (I-08, step 6) or the automatic export (I-85): then both current files, including one found by the automatic
 search, and the `subtitlesChosen` flag (3.4) are written to the history; after that the automatic search no longer
 applies to the video. Removing both files is a choice too: the video stays without subtitles.
 
 All found files are listed in the "Subtitles" dialog (I-57) under "Found next to the video:" for a quick choice:
 the path relative to the video folder, the language and flags, the "Main" and "Secondary" buttons. When the current
 subtitles were chosen by the automatic search, the dialog says so.
+
+**Automatic export (I-85).** When a video that is not in the history is opened (a new entry by I-12, including
+another file at the same path) and the automatic search (I-06) finds no subtitle file, embedded text tracks are
+exported without questions:
+
+- forced tracks are skipped: they contain only part of the text (signs, foreign speech). A track is forced by the
+  container flag or when its title contains the word `forced`;
+- of the other tracks, the first one (in the order of the container) in the studied language and the first one in
+  the native language (I-55) are exported; when the two languages are the same — one track. Tracks without a
+  language are not exported;
+- SDH tracks (the "hearing impaired" flag, or the words `SDH`, `CC`, `HI` in the title) are taken only when the
+  language has no other track.
+
+When no track fits, nothing happens. Otherwise the export runs as in I-08: the files are written to the video folder
+with the names of I-08 (an existing file is never replaced — "Keep both"), in the background, with the progress
+window and "Cancel"; an error is shown in a dialog. It does not start while another export is running.
+
+After the export the files become the subtitles of this video as the user's choice (I-13, `subtitlesChosen`),
+without the question of step 6: main — the track in the studied language, secondary — the one in the native
+language; when there is no track in the studied language, the native one becomes main and there is no secondary
+(as in I-06). The files are assigned even when another video was opened meanwhile, but not when the user has chosen
+subtitles for the video during the export.
 
 ### 2.2. Files and history
 
@@ -273,7 +296,8 @@ false) and the automatic search (I-06) applies. A renamed file (another name) is
 contents is not used: the name and the size are enough, and a hash needs reading the file at every opening.
 
 **Subtitles when a video is opened:** 1) the ones saved for the file in the history (I-13); 2) otherwise — the ones
-found by the automatic search (I-06); 3) otherwise — none. Without main subtitles the subtitle list shows a hint
+found by the automatic search (I-06); 3) otherwise — none; for a video that is not in the history the automatic
+export (I-85) may then add them. Without main subtitles the subtitle list shows a hint
 instead of the cues: "No subtitles", the "Choose files…" button and, when the video has embedded text tracks, "Export
 embedded…" (I-08).
 
@@ -601,7 +625,8 @@ Decisions on former open questions (2026-10-14).
 - `audioTrackId` — the mpv track number (`aid`), only when the user chose it (I-02); `null` — the automatic choice
   by I-54.
 - `mainSubtitles`, `secondarySubtitles` — the subtitle files chosen by the user, or `null` (I-13);
-  `subtitlesChosen` — the user chose the subtitles of the video, the automatic search (I-06) does not apply.
+  `subtitlesChosen` — the user chose the subtitles of the video (or the automatic export assigned them, I-85), the
+  automatic search (I-06) does not apply.
 - `mainOffsetMs`, `secondaryOffsetMs` — subtitle offsets, applied when the subtitles are loaded; the interface does
   not set them, so they are 0.
 - `durationMs` — to show the progress in the history list.

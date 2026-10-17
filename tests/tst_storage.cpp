@@ -110,12 +110,15 @@ void StorageTest::historyTouchOrdersByRecency() {
 
 void StorageTest::historyKeepsDataOnTouch() {
     History history;
-    HistoryEntry &entry = history.touch("D:/a.mkv", 1, QDateTime::currentDateTimeUtc());
+    bool isNew = false;
+    HistoryEntry &entry = history.touch("D:/a.mkv", 1, QDateTime::currentDateTimeUtc(), {}, &isNew);
+    QVERIFY(isNew);
     entry.positionMs = 5000;
     entry.mainSubtitles = "D:/a.en.srt";
     history.touch("D:/b.mkv", 2, QDateTime::currentDateTimeUtc());
-    const HistoryEntry &touched = history.touch("D:/a.mkv", 1, QDateTime::currentDateTimeUtc());
+    const HistoryEntry &touched = history.touch("D:/a.mkv", 1, QDateTime::currentDateTimeUtc(), {}, &isNew);
 
+    QVERIFY(!isNew);
     QCOMPARE(touched.positionMs, 5000);
     QCOMPARE(touched.mainSubtitles, QStringLiteral("D:/a.en.srt"));
     QCOMPARE(touched.size, 1);
@@ -139,8 +142,10 @@ void StorageTest::historyNewFileAtSamePath() {
     HistoryEntry &entry = history.touch("D:/a.mkv", 1, QDateTime::currentDateTimeUtc());
     entry.positionMs = 5000;
     entry.audioTrackId = 2;
-    const HistoryEntry &touched = history.touch("D:/a.mkv", 7, QDateTime::currentDateTimeUtc());
+    bool isNew = false;
+    const HistoryEntry &touched = history.touch("D:/a.mkv", 7, QDateTime::currentDateTimeUtc(), {}, &isNew);
 
+    QVERIFY(isNew);
     QCOMPARE(history.entries().size(), 1);
     QCOMPARE(touched.positionMs, 0);
     QCOMPARE(touched.audioTrackId, 0);
@@ -164,8 +169,11 @@ void StorageTest::historyFindsMovedFile() {
     HistoryEntry &newer = history.touch("D:/Old2/movie.mkv", 5, now.addSecs(-10));
     newer.positionMs = 2000;
     history.touch("D:/Other/other.mkv", 5, now.addSecs(-5));
-    const HistoryEntry &touched = history.touch("D:/New/movie.mkv", 5, now, existing({"D:/Other/other.mkv"}));
+    bool isNew = true;
+    const HistoryEntry &touched =
+        history.touch("D:/New/movie.mkv", 5, now, existing({"D:/Other/other.mkv"}), &isNew);
 
+    QVERIFY(!isNew);
     QCOMPARE(touched.path, QStringLiteral("D:/New/movie.mkv"));
     QCOMPARE(touched.positionMs, 2000);
     QCOMPARE(history.entries().size(), 3);

@@ -46,7 +46,9 @@ public:
     // 2) the most recent entry with this file name and size whose file is missing (the file was moved), with
     //    its subtitle paths moved along; skipped without `fileExists`;
     // 3) a new entry.
-    HistoryEntry &touch(const QString &path, qint64 size, const QDateTime &now, const FileExists &fileExists = {});
+    // isNew is set to true for a new entry (case 3 or another file at the same path).
+    HistoryEntry &touch(const QString &path, qint64 size, const QDateTime &now, const FileExists &fileExists = {},
+                        bool *isNew = nullptr);
 
     void remove(const QString &path);
     void clear();

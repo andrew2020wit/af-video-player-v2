@@ -1,5 +1,6 @@
 qt_add_library(afvp_core STATIC
     AudioTracks.cpp AudioTracks.h
+    AutoExport.cpp AutoExport.h
     CueText.cpp CueText.h
     ExportNaming.cpp ExportNaming.h
     History.cpp History.h
