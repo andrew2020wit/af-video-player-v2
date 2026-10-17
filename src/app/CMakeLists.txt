@@ -36,6 +36,7 @@ qt_add_qml_module(af-video-player
         qml/SettingsPage.qml
         qml/LanguagePicker.qml
         qml/UrlTemplateField.qml
+        qml/NumberField.qml
     SOURCES
         AppController.cpp AppController.h
         FramePreviewProvider.cpp FramePreviewProvider.h

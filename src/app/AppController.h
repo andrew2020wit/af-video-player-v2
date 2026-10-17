@@ -126,7 +126,9 @@ public:
     QString qtVersion() const;
     QString ffmpegVersion() const;
 
-    // URL templates of the dictionary and the translator. A template is saved only when it is valid (has {text}).
+    // URL templates of the dictionary and the translator. A template is saved only when it is valid (has {text}, no
+    // whitespace); leading and trailing whitespace is ignored.
+    Q_INVOKABLE bool isValidUrlTemplate(const QString &url) const;
     Q_INVOKABLE bool setDictionaryUrl(const QString &url);
     Q_INVOKABLE bool setTranslatorUrl(const QString &url);
     Q_INVOKABLE void resetDictionaryUrl();

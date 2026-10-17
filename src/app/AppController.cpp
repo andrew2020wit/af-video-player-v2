@@ -400,6 +400,10 @@ QString AppController::ffmpegVersion() const {
     return afvp::ffmpegVersion();
 }
 
+bool AppController::isValidUrlTemplate(const QString &url) const {
+    return afvp::Settings::isValidUrlTemplate(url.trimmed());
+}
+
 bool AppController::setDictionaryUrl(const QString &url) {
     return setUrlTemplate(m_settings.dictionaryUrl, url);
 }

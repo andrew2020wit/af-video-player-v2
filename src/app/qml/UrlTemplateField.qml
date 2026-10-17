@@ -2,7 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-// One URL template (I-42, I-47). It is saved only when valid (contains {text}); an invalid one is highlighted.
+// One URL template (I-42, I-47). It is saved only when valid (contains {text}, no whitespace); an invalid one is
+// highlighted.
 RowLayout {
     id: templateField
 
@@ -19,7 +20,7 @@ RowLayout {
         Layout.fillWidth: true
         text: templateField.source
         placeholderText: "https://…{text}…"
-        color: text.includes("{text}") ? palette.text : "#c62828"
+        color: App.isValidUrlTemplate(text) ? palette.text : "#c62828"
 
         onTextEdited: templateField.save(text)
     }

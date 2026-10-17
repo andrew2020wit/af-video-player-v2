@@ -126,7 +126,8 @@ QString Settings::defaultTranslatorUrl() {
 }
 
 bool Settings::isValidUrlTemplate(const QString &url) {
-    return url.contains(QStringLiteral("{text}"));
+    return url.contains(QStringLiteral("{text}"))
+        && std::none_of(url.cbegin(), url.cend(), [](QChar character) { return character.isSpace(); });
 }
 
 } // namespace afvp

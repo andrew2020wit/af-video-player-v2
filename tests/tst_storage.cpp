@@ -16,6 +16,8 @@ private slots:
     void settingsDefaults();
     void settingsRoundTrip();
     void settingsInvalidValues();
+    void urlTemplateValidity_data();
+    void urlTemplateValidity();
     void historyTouchOrdersByRecency();
     void historyKeepsDataOnTouch();
     void historyTrim();
@@ -94,6 +96,25 @@ void StorageTest::settingsInvalidValues() {
     QCOMPARE(settings.studiedLanguage, QStringLiteral("en"));
     QCOMPARE(settings.dictionaryUrl, Settings::defaultDictionaryUrl());
     QCOMPARE(settings.translatorUrl, Settings::defaultTranslatorUrl());
+}
+
+void StorageTest::urlTemplateValidity_data() {
+    QTest::addColumn<QString>("url");
+    QTest::addColumn<bool>("valid");
+
+    QTest::newRow("default") << Settings::defaultTranslatorUrl() << true;
+    QTest::newRow("no text") << QStringLiteral("https://d.example/") << false;
+    QTest::newRow("empty") << QStringLiteral("") << false;
+    QTest::newRow("space inside") << QStringLiteral("https://d.example/ {text}") << false;
+    QTest::newRow("tab inside") << QStringLiteral("https://d.example/\t{text}") << false;
+    QTest::newRow("trailing space") << QStringLiteral("https://d.example/{text} ") << false;
+}
+
+void StorageTest::urlTemplateValidity() {
+    QFETCH(QString, url);
+    QFETCH(bool, valid);
+
+    QCOMPARE(Settings::isValidUrlTemplate(url), valid);
 }
 
 void StorageTest::historyTouchOrdersByRecency() {

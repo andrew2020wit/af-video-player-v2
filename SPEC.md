@@ -458,9 +458,10 @@ Changes apply and are saved at once; an invalid value is highlighted and not sav
   A choice from the list of ISO 639-1 languages with a filter by typing; a language is shown by its native name and
   code: "English — en", "Українська — uk".
 - **Dictionary** (I-42) and **Translator** (I-47): one URL template each and a "Reset to default" button. A template
-  must contain `{text}`.
+  must contain `{text}` and no whitespace (leading and trailing whitespace is ignored).
 - **Subtitles** (I-26): font sizes of the main and secondary subtitles in the subtitle list and, separately, over
   the video (I-22); 10–72 px, with a sample text next to them in the colours of the list / the video.
+  Number fields here and in the history section accept digits only; an empty value is not applied.
 - **History:** size (I-15), "Start watched files from the beginning" (I-76), "Clear history…" with a confirmation.
 - **About:** version, the GPL-3.0-or-later license, a link to the source code, the versions of Qt, libmpv and
   FFmpeg.
@@ -588,7 +589,7 @@ Decisions on former open questions (2026-10-14).
 - `preferredAudioLanguage` (I-54): `null` — equal to the studied language.
 - `dictionaryUrl` (I-42), `translatorUrl` (I-47): the URL templates of the dictionary (a click on a word) and the
   translator (the `G` button). The substitutions `{text}`, `{src}`, `{dst}` are URL-encoded (I-40). An invalid
-  template (without `{text}`) is replaced with the default one.
+  template (without `{text}` or with whitespace) is replaced with the default one.
 - `mainSubtitleFontSize`, `secondarySubtitleFontSize` — font sizes of the subtitle list in pixels (I-26), 10–72,
   26 and 20 by default.
 - `showSubtitleOverlay` — subtitles on video (I-22); `mainOverlayFontSize`, `secondaryOverlayFontSize` — their

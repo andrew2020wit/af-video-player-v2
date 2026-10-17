@@ -65,7 +65,7 @@ struct Settings {
 
     static QString defaultDictionaryUrl();
     static QString defaultTranslatorUrl();
-    // A URL template is valid when it contains {text}.
+    // A URL template is valid when it contains {text} and no whitespace (a space in a URL is a typo).
     static bool isValidUrlTemplate(const QString &url);
 
     bool operator==(const Settings &other) const = default;

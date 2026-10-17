@@ -185,10 +185,9 @@ Page {
                         text: qsTr("Main subtitles font size")
                     }
 
-                    SpinBox {
+                    NumberField {
                         from: App.minimumSubtitleFontSize
                         to: App.maximumSubtitleFontSize
-                        editable: true
                         value: App.mainSubtitleFontSize
 
                         onValueModified: App.mainSubtitleFontSize = value
@@ -206,10 +205,9 @@ Page {
                         text: qsTr("Secondary subtitles font size")
                     }
 
-                    SpinBox {
+                    NumberField {
                         from: App.minimumSubtitleFontSize
                         to: App.maximumSubtitleFontSize
-                        editable: true
                         value: App.secondarySubtitleFontSize
 
                         onValueModified: App.secondarySubtitleFontSize = value
@@ -234,10 +232,9 @@ Page {
                         text: qsTr("Main subtitles font size")
                     }
 
-                    SpinBox {
+                    NumberField {
                         from: App.minimumSubtitleFontSize
                         to: App.maximumSubtitleFontSize
-                        editable: true
                         value: App.mainOverlayFontSize
 
                         onValueModified: App.mainOverlayFontSize = value
@@ -251,10 +248,9 @@ Page {
                         text: qsTr("Secondary subtitles font size")
                     }
 
-                    SpinBox {
+                    NumberField {
                         from: App.minimumSubtitleFontSize
                         to: App.maximumSubtitleFontSize
-                        editable: true
                         value: App.secondaryOverlayFontSize
 
                         onValueModified: App.secondaryOverlayFontSize = value
@@ -277,10 +273,9 @@ Page {
                         text: qsTr("Files to keep")
                     }
 
-                    SpinBox {
+                    NumberField {
                         from: 1
                         to: 1000
-                        editable: true
                         value: App.historySize
 
                         onValueModified: App.historySize = value
