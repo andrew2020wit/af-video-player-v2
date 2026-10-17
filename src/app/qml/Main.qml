@@ -153,6 +153,13 @@ ApplicationWindow {
 
         if (App.videoPath !== "") {
             player.handleKey(event, key)
+        } else if (key === Qt.Key_F) {
+            // Full screen on the start page as well (I-30).
+            toggleFullScreen()
+            event.accepted = true
+        } else if (key === Qt.Key_Escape) {
+            exitFullScreen()
+            event.accepted = true
         }
     }
 
@@ -231,6 +238,7 @@ ApplicationWindow {
 
             onOpenFileRequested: window.openVideoDialog()
             onSettingsRequested: window.openSettings()
+            onFullScreenRequested: window.toggleFullScreen()
             onHistoryItemClicked: path => {
                 player.openVideo(path)
                 root.forceActiveFocus()

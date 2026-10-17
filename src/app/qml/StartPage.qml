@@ -16,6 +16,7 @@ Rectangle {
 
     signal openFileRequested()
     signal settingsRequested()
+    signal fullScreenRequested()
     signal historyItemClicked(string path)
 
     function toggleFolder(folder) {
@@ -60,6 +61,20 @@ Rectangle {
 
             ToolTip.visible: hovered
             ToolTip.text: qsTr("Settings (Ctrl+,)")
+        }
+
+        // Full screen (I-30), as on the control panel.
+        ToolButton {
+            anchors.verticalCenter: parent.verticalCenter
+            text: "⛶"
+            font.pixelSize: 22
+            font.family: "Segoe UI Symbol"
+            focusPolicy: Qt.NoFocus
+
+            onClicked: startPage.fullScreenRequested()
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("Full screen (F)")
         }
     }
 
