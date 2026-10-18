@@ -150,9 +150,14 @@ Item {
                 text: row.timeText
                 color: "#5b6270"
                 font.pixelSize: 15
+                // Underlined under the mouse: the time is clickable (F-46).
+                font.underline: timeMouseArea.containsMouse
 
                 MouseArea {
+                    id: timeMouseArea
+
                     anchors.fill: parent
+                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
 
                     onClicked: row.timeClicked()

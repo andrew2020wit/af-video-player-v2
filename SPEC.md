@@ -109,7 +109,7 @@ dictionary, translate, jump to a time.
     much has been watched since the last pause;
   - *marked by the user* (bold) — by a right click on the row. There is one mark, in memory, not kept between
     sessions.
-- **F-46. Jump to a time:** a click on the cue time seeks to its start, starts playback and closes the list.
+- **F-46. Jump to a time:** a click on the cue time seeks to its start, starts playback and closes the list. The time is underlined under the mouse, as a sign that it is clickable.
 - **F-47. Pause indicator:** between cues with a pause of 5 s or more a horizontal bar is drawn, its length
   proportional to the pause (100% = 60 s or more). It helps to see "scenes".
 
