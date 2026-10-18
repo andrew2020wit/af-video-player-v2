@@ -33,6 +33,8 @@ public:
 
     // Index of the current cue for a playback time in seconds, -1 before the first cue (F-45).
     Q_INVOKABLE int indexAt(double seconds) const;
+    // Index of the first cue starting at or after a time in seconds, count() when there is none (I-89).
+    Q_INVOKABLE int indexFrom(double seconds) const;
     Q_INVOKABLE double startSeconds(int index) const;
     Q_INVOKABLE QString text(int index) const;
 

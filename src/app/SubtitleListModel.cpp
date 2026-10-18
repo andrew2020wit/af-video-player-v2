@@ -71,6 +71,10 @@ int SubtitleListModel::indexAt(double seconds) const {
     return int(afvp::findCurrentCueIndex(m_cues, qint64(seconds * 1000.0 + 0.5)));
 }
 
+int SubtitleListModel::indexFrom(double seconds) const {
+    return int(afvp::findCueIndexFrom(m_cues, qint64(seconds * 1000.0 + 0.5)));
+}
+
 double SubtitleListModel::startSeconds(int index) const {
     if (index < 0 || index >= m_cues.size()) {
         return 0;

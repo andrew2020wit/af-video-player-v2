@@ -30,6 +30,7 @@ qt_add_qml_module(af-video-player
         qml/ControlBar.qml
         qml/SubtitleList.qml
         qml/SubtitleRow.qml
+        qml/ChapterHeading.qml
         qml/Osd.qml
         qml/SubtitleOverlay.qml
         qml/SubtitlesDialog.qml

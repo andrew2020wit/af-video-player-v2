@@ -49,4 +49,11 @@ qsizetype findCurrentCueIndex(const QList<Cue> &cues, qint64 timeMs) {
     return low - 1;
 }
 
+// Index of the first cue with startMs >= timeMs, or cues.size() when there is none: the row a chapter heading is
+// shown above (I-89).
+template <typename Cue>
+qsizetype findCueIndexFrom(const QList<Cue> &cues, qint64 timeMs) {
+    return findCurrentCueIndex(cues, timeMs - 1) + 1;
+}
+
 } // namespace afvp

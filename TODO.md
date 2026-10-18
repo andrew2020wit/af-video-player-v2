@@ -33,6 +33,8 @@ Done but not verified.
 - [ ] Manually (0.1.34): the batch export of a folder (I-87): the files next to the videos, skipped forced tracks
   and earlier exports, the window closing itself, "Cancel", the button bringing the running window to the front,
   the player usable meanwhile.
+- [ ] Manually (0.1.37): chapter headings in the subtitle list (I-89) on a file with chapters: their places
+  between the cues, chapters after the last cue at the end, a click going to the chapter start.
 - [ ] Seeking repeats while `←`/`→` are held (I-33): there is no separate code, it should work through key
   auto-repeat.
 

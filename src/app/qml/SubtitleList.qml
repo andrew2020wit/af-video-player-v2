@@ -15,6 +15,30 @@ Rectangle {
     property int previousIndex: -1
     // Marked by a right click (F-45): one mark, in memory only.
     property int markedIndex: -1
+    // Chapter headings by the row they are shown above (I-89): {row: [{label, time}]}; the row count is the end
+    // of the list, for chapters after the last cue start.
+    readonly property var chapterRows: {
+        const rows = {}
+        const chapters = mpv.chapters
+
+        if (App.subtitles.count === 0) {
+            return rows
+        }
+
+        for (let i = 0; i < chapters.length; ++i) {
+            const title = chapters[i].title.trim()
+            const label = title !== "" ? qsTr("Chapter %1: %2").arg(i + 1).arg(title) : qsTr("Chapter %1").arg(i + 1)
+            const row = App.subtitles.indexFrom(chapters[i].time)
+
+            if (!rows[row]) {
+                rows[row] = []
+            }
+
+            rows[row].push({label: label, time: chapters[i].time})
+        }
+
+        return rows
+    }
     // The next video in the folder, set when the video has played to the end (I-16).
     property string nextVideoPath: ""
 
@@ -48,6 +72,12 @@ Rectangle {
         if (currentIndex >= 0) {
             listView.positionViewAtIndex(currentIndex, ListView.Center)
         }
+    }
+
+    // A click on a chapter heading (I-89): seek to the chapter start and continue playback, as a cue time (F-46).
+    function goToChapter(seconds) {
+        mpv.seek(seconds)
+        closeRequested()
     }
 
     color: "#ffffff"
@@ -96,6 +126,7 @@ Rectangle {
             isCurrent: row.index === list.currentIndex
             isPrevious: row.index === list.previousIndex && row.index !== list.currentIndex
             isMarked: row.index === list.markedIndex
+            chapters: list.chapterRows[row.index] || []
 
             onTimeClicked: {
                 // F-46: seek to the cue start and continue playback.
@@ -103,6 +134,25 @@ Rectangle {
                 list.closeRequested()
             }
             onMarkToggled: list.markedIndex = list.markedIndex === row.index ? -1 : row.index
+            onChapterClicked: seconds => list.goToChapter(seconds)
+        }
+
+        // Chapters after the last cue start (I-89).
+        footer: Column {
+            width: listView.width - 16
+
+            Repeater {
+                model: list.chapterRows[App.subtitles.count] || []
+
+                ChapterHeading {
+                    required property var modelData
+
+                    width: listView.width - 16
+                    text: modelData.label
+
+                    onClicked: list.goToChapter(modelData.time)
+                }
+            }
         }
 
         ScrollBar.vertical: ScrollBar {

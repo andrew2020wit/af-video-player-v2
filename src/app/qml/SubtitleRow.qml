@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -14,9 +16,12 @@ Item {
     property bool isCurrent: false
     property bool isPrevious: false
     property bool isMarked: false
+    // Chapters that start after the previous cue and not later than this one (I-89): [{label, time}].
+    property var chapters: []
 
     signal timeClicked()
     signal markToggled()
+    signal chapterClicked(real seconds)
 
     // Cue text: a click looks up the word under the cursor, a drag selects text and looks up the selection (I-59).
     component CueText: TextEdit {
@@ -61,10 +66,32 @@ Item {
     }
 
     width: ListView.view ? ListView.view.width - 16 : 0
-    height: content.implicitHeight + 12
+    height: headings.height + content.implicitHeight + 12
+
+    // Chapter headings above the cue (I-89), outside its highlight.
+    Column {
+        id: headings
+
+        width: row.width
+
+        Repeater {
+            model: row.chapters
+
+            ChapterHeading {
+                required property var modelData
+
+                width: headings.width
+                text: modelData.label
+
+                onClicked: row.chapterClicked(modelData.time)
+            }
+        }
+    }
 
     Rectangle {
-        anchors.fill: parent
+        y: headings.height
+        width: row.width
+        height: row.height - headings.height
         color: row.isCurrent ? "#dbeafe" : row.isPrevious ? "#fff4c2" : "transparent"
     }
 
@@ -83,7 +110,7 @@ Item {
         id: content
 
         x: 16
-        y: 6
+        y: headings.height + 6
         width: row.width - 32
         spacing: 4
 

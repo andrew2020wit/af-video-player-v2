@@ -22,6 +22,8 @@ private slots:
     void shift();
     void currentCue_data();
     void currentCue();
+    void cueFrom_data();
+    void cueFrom();
     void activeText_data();
     void activeText();
 };
@@ -143,6 +145,26 @@ void SubtitleMergeTest::currentCue() {
     const SubtitleCues cues = {cue(1000, 2000, "A"), cue(3000, 4000, "B"), cue(5000, 6000, "C")};
 
     QCOMPARE(findCurrentCueIndex(cues, timeMs), index);
+}
+
+void SubtitleMergeTest::cueFrom_data() {
+    QTest::addColumn<qint64>("timeMs");
+    QTest::addColumn<qsizetype>("index");
+
+    QTest::newRow("before first") << qint64(0) << qsizetype(0);
+    QTest::newRow("at first start") << qint64(1000) << qsizetype(0);
+    QTest::newRow("inside first") << qint64(1500) << qsizetype(1);
+    QTest::newRow("in the pause") << qint64(2500) << qsizetype(1);
+    QTest::newRow("at last start") << qint64(5000) << qsizetype(2);
+    QTest::newRow("after last start") << qint64(5001) << qsizetype(3);
+}
+
+void SubtitleMergeTest::cueFrom() {
+    QFETCH(qint64, timeMs);
+    QFETCH(qsizetype, index);
+    const SubtitleCues cues = {cue(1000, 2000, "A"), cue(3000, 4000, "B"), cue(5000, 6000, "C")};
+
+    QCOMPARE(findCueIndexFrom(cues, timeMs), index);
 }
 
 void SubtitleMergeTest::activeText_data() {
