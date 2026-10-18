@@ -27,6 +27,13 @@ ApplicationWindow {
 
         if (saved.valid && saved.fullScreen) {
             visibilityBeforeFullScreen = saved.maximized ? Window.Maximized : Window.Windowed
+
+            // On Windows full screen is entered from the maximized window, so that leaving it goes straight back.
+            if (saved.maximized && Qt.platform.os === "windows") {
+                window.showMaximized()
+                fullScreenPlacement.enter(window)
+            }
+
             window.showFullScreen()
         } else if (saved.valid && saved.maximized) {
             window.showMaximized()
@@ -52,6 +59,11 @@ ApplicationWindow {
             exitFullScreen()
         } else {
             visibilityBeforeFullScreen = window.visibility
+
+            if (visibilityBeforeFullScreen === Window.Maximized) {
+                fullScreenPlacement.enter(window)
+            }
+
             window.showFullScreen()
         }
     }
@@ -66,6 +78,8 @@ ApplicationWindow {
         } else {
             window.showNormal()
         }
+
+        fullScreenPlacement.leave(window)
     }
 
     function openSettings() {
@@ -285,6 +299,10 @@ ApplicationWindow {
                 }
             }
         }
+    }
+
+    FullScreenPlacement {
+        id: fullScreenPlacement
     }
 
     // The normal geometry is taken a moment after a change, when a switch to or from the maximized or full screen

@@ -43,6 +43,7 @@ qt_add_qml_module(af-video-player
         AppController.cpp AppController.h
         BatchExporter.cpp BatchExporter.h
         FramePreviewProvider.cpp FramePreviewProvider.h
+        FullScreenPlacement.cpp FullScreenPlacement.h
         HandCursorFilter.cpp HandCursorFilter.h
         MpvObject.cpp MpvObject.h
         SingleInstance.cpp SingleInstance.h
